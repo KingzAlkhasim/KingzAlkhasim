@@ -481,53 +481,60 @@
             <!-- Form -->
             <div id="modalFormWrap">
                 <form class="modal-form" id="tournamentForm">
-                    <div>
-                        <label for="t_name">In-Game Name</label>
-                        <input type="text" id="t_name" name="ign" placeholder="Your IGN / Gamertag" required>
-                    </div>
-                    <div>
-                        <label for="t_uid">Game UID <span style="color:var(--accent-cyan);font-size:0.8rem;">(Your unique player ID)</span></label>
-                        <input type="text" id="t_uid" name="uid" placeholder="e.g. 123456789" required
-                               style="font-family:'Space Mono',monospace; letter-spacing:0.05em;">
-                    </div>
-                    <div>
-                        <label for="t_email">Email Address</label>
-                        <input type="email" id="t_email" name="email" placeholder="you@example.com" required>
-                    </div>
-                    <div>
-                        <label for="t_game">Preferred Game</label>
-                        <select id="t_game" name="game" required>
-                            <option value="">Choose a game...</option>
-                            <option value="freefire">🔥 Free Fire</option>
-                            <option value="gd">⬡ Geometry Dash</option>
-                            <option value="codm">🪖 Call of Duty Mobile</option>
-                            <option value="bloodstrike">🩸 BloodStrike</option>
-                            <option value="efootball">⚽ eFootball</option>
-                            <option value="any">🎮 Any / Surprise Me</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="t_device">Device / Platform</label>
-                        <select id="t_device" name="device" required>
-                            <option value="">Select platform...</option>
-                            <option value="android">📱 Android</option>
-                            <option value="ios">📱 iOS</option>
-                            <option value="pc">💻 PC</option>
-                            <option value="console">🎮 Console</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="t_skill">Skill Level</label>
-                        <select id="t_skill" name="skill">
-                            <option value="">Be honest...</option>
-                            <option value="rookie">🐣 Rookie — Still learning</option>
-                            <option value="mid">⚔️ Mid — Holding my own</option>
-                            <option value="sweaty">💀 Sweaty — I live in this game</option>
-                            <option value="pro">👑 Pro — Let's just say, I win</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="modal-submit">🎯 Lock In My Spot</button>
-                </form>
+    <input type="hidden" name="access_key" value="abe925c4-62d9-4db6-9bb8-682c103628f9">
+
+    <input type="hidden" name="subject" value="New Tournament Registration">
+    <input type="hidden" name="from_name" value="KingzAlkhassim Gaming">
+
+    <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+    <div>
+        <label for="t_name">In-Game Name</label>
+        <input type="text" id="t_name" name="ign" placeholder="Your IGN / Gamertag" required>
+    </div>
+    <div>
+        <label for="t_uid">Game UID</label>
+        <input type="text" id="t_uid" name="uid" placeholder="e.g. 123456789" required style="font-family:'Space Mono',monospace; letter-spacing:0.05em;">
+    </div>
+    <div>
+        <label for="t_email">Email Address</label>
+        <input type="email" id="t_email" name="email" placeholder="you@example.com" required>
+    </div>
+    <div>
+        <label for="t_game">Preferred Game</label>
+        <select id="t_game" name="game" required>
+            <option value="">Choose a game...</option>
+            <option value="freefire">🔥 Free Fire</option>
+            <option value="gd">⬡ Geometry Dash</option>
+            <option value="codm">🪖 Call of Duty Mobile</option>
+            <option value="bloodstrike">🩸 BloodStrike</option>
+            <option value="efootball">⚽ eFootball</option>
+            <option value="any">🎮 Any / Surprise Me</option>
+        </select>
+    </div>
+    <div>
+        <label for="t_device">Device / Platform</label>
+        <select id="t_device" name="device" required>
+            <option value="">Select platform...</option>
+            <option value="android">📱 Android</option>
+            <option value="ios">📱 iOS</option>
+            <option value="pc">💻 PC</option>
+            <option value="console">🎮 Console</option>
+        </select>
+    </div>
+    <div>
+        <label for="t_skill">Skill Level</label>
+        <select id="t_skill" name="skill">
+            <option value="">Be honest...</option>
+            <option value="rookie">🐣 Rookie</option>
+            <option value="mid">⚔️ Mid</option>
+            <option value="sweaty">💀 Sweaty</option>
+            <option value="pro">👑 Pro</option>
+        </select>
+    </div>
+    <button type="submit" class="modal-submit">🎯 Lock In My Spot</button>
+</form>
+
             </div>
 
             <!-- Success State -->
