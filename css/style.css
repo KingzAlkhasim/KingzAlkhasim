@@ -769,6 +769,15 @@
             flex-wrap: wrap;
         }
 
+/* X (Twitter) Brand Color on Hover */
+.social-link.sl-x:hover { 
+    background: #000000; 
+    border-color: #333333; 
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); 
+    transform: translateY(-3px); 
+}
+
+
         .social-link {
             width: 42px;
             height: 42px;
