@@ -151,3 +151,234 @@ tourModal.addEventListener('click', e => {
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && tourModal.classList.contains('open')) closeModal();
 });
+
+
+// ═══════════════════════════════════════════════════════════
+// TYPING ANIMATION SYSTEM
+// Add this to your existing script.js file at the bottom
+// ═══════════════════════════════════════════════════════════
+
+/**
+ * Typing Animation Function
+ * @param {string} elementSelector - CSS selector for the element
+ * @param {string} text - Text to type out
+ * @param {number} speed - Typing speed in milliseconds (default: 80)
+ * @param {number} delay - Delay before starting (default: 0)
+ * @param {boolean} cursor - Show blinking cursor (default: true)
+ */
+function typeText(elementSelector, text, speed = 80, delay = 0, cursor = true) {
+    const element = document.querySelector(elementSelector);
+    if (!element) return;
+
+    // Store original text
+    const originalText = text;
+    element.textContent = '';
+    
+    // Add cursor if enabled
+    if (cursor) {
+        element.classList.add('typing-cursor');
+    }
+
+    setTimeout(() => {
+        let i = 0;
+        const typeInterval = setInterval(() => {
+            if (i < originalText.length) {
+                element.textContent += originalText.charAt(i);
+                i++;
+            } else {
+                clearInterval(typeInterval);
+                // Remove cursor after typing completes
+                if (cursor) {
+                    setTimeout(() => {
+                        element.classList.remove('typing-cursor');
+                    }, 1000);
+                }
+            }
+        }, speed);
+    }, delay);
+}
+
+/**
+ * Typing Animation for Multiple Lines
+ * Types out text line by line with pauses
+ */
+function typeMultiline(elementSelector, lines, speed = 80, linePause = 500) {
+    const element = document.querySelector(elementSelector);
+    if (!element) return;
+
+    element.textContent = '';
+    element.classList.add('typing-cursor');
+    
+    let currentLine = 0;
+    let currentChar = 0;
+
+    function typeNextChar() {
+        if (currentLine >= lines.length) {
+            element.classList.remove('typing-cursor');
+            return;
+        }
+
+        const line = lines[currentLine];
+        
+        if (currentChar < line.length) {
+            element.textContent += line.charAt(currentChar);
+            currentChar++;
+            setTimeout(typeNextChar, speed);
+        } else {
+            // Finished current line, move to next after pause
+            if (currentLine < lines.length - 1) {
+                element.textContent += '\n';
+            }
+            currentLine++;
+            currentChar = 0;
+            setTimeout(typeNextChar, linePause);
+        }
+    }
+
+    typeNextChar();
+}
+
+/**
+ * Initialize typing animations when elements come into view
+ */
+function initTypingAnimations() {
+    // Create IntersectionObserver for scroll-triggered typing
+    const typingObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.dataset.typed) {
+                entry.target.dataset.typed = 'true';
+                const text = entry.target.dataset.typeText;
+                const speed = parseInt(entry.target.dataset.typeSpeed) || 80;
+                const delay = parseInt(entry.target.dataset.typeDelay) || 0;
+                
+                typeText(`#${entry.target.id}`, text, speed, delay, true);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    // Observe elements with data-type-text attribute
+    document.querySelectorAll('[data-type-text]').forEach(el => {
+        typingObserver.observe(el);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// APPLY TYPING ANIMATIONS TO YOUR SITE
+// ═══════════════════════════════════════════════════════════
+
+// Wait for DOM to load
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 1. TYPE OUT THE MAIN HERO HEADLINE (delay so page loads first)
+    setTimeout(() => {
+        const heroH1 = document.querySelector('.hero-content h1');
+        if (heroH1) {
+            const fullText = heroH1.textContent;
+            typeText('.hero-content h1', fullText, 60, 300, true);
+        }
+    }, 500);
+
+    // 2. TYPE OUT THE HERO SUBTITLE (starts after headline)
+    setTimeout(() => {
+        const subtitle = document.querySelector('.hero-content .subtitle');
+        if (subtitle) {
+            const fullText = subtitle.textContent;
+            typeText('.hero-content .subtitle', fullText, 40, 0, false);
+        }
+    }, 3500); // Adjust based on headline length
+
+    // 3. GAMING SECTION - Type gamer tagline on scroll
+    const gamerSubtitle = document.querySelector('#gaming .section-subtitle');
+    if (gamerSubtitle) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !gamerSubtitle.dataset.typed) {
+                    gamerSubtitle.dataset.typed = 'true';
+                    const text = gamerSubtitle.textContent;
+                    typeText('#gaming .section-subtitle', text, 50, 200, true);
+                }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(gamerSubtitle);
+    }
+
+    // 4. SERVICES SECTION - Type the "What I Offer" subtitle
+    const servicesSubtitle = document.querySelector('#services .section-subtitle');
+    if (servicesSubtitle) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !servicesSubtitle.dataset.typed) {
+                    servicesSubtitle.dataset.typed = 'true';
+                    const text = servicesSubtitle.textContent;
+                    typeText('#services .section-subtitle', text, 45, 300, false);
+                }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(servicesSubtitle);
+    }
+
+    // 5. ABOUT SECTION - Type your bio paragraphs one by one
+    const aboutParagraphs = document.querySelectorAll('#about .about-content p');
+    if (aboutParagraphs.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    aboutParagraphs.forEach((p, index) => {
+                        if (!p.dataset.typed) {
+                            p.dataset.typed = 'true';
+                            const text = p.textContent;
+                            // Stagger each paragraph
+                            setTimeout(() => {
+                                p.textContent = '';
+                                typeText(`#about .about-content p:nth-of-type(${index + 1})`, text, 30, 0, false);
+                            }, index * 2000); // 2 second delay between paragraphs
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+        observer.observe(document.querySelector('#about .about-content'));
+    }
+
+    // 6. TOURNAMENT BANNER - Type the main text
+    const tournamentText = document.querySelector('.tournament-banner > p');
+    if (tournamentText) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !tournamentText.dataset.typed) {
+                    tournamentText.dataset.typed = 'true';
+                    const text = tournamentText.textContent;
+                    typeText('.tournament-banner > p', text, 40, 400, false);
+                }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(tournamentText);
+    }
+
+    // 7. CONTACT SECTION - Type the subtitle
+    const contactSubtitle = document.querySelector('#contact .section-subtitle');
+    if (contactSubtitle) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !contactSubtitle.dataset.typed) {
+                    contactSubtitle.dataset.typed = 'true';
+                    const text = contactSubtitle.textContent;
+                    typeText('#contact .section-subtitle', text, 50, 200, false);
+                }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(contactSubtitle);
+    }
+});
+
+// Optional: Add typing effect to modal when it opens
+document.getElementById('openTournamentModal')?.addEventListener('click', function() {
+    setTimeout(() => {
+        const modalDesc = document.querySelector('.modal-header p');
+        if (modalDesc && !modalDesc.dataset.typed) {
+            modalDesc.dataset.typed = 'true';
+            const text = modalDesc.textContent;
+            typeText('.modal-header p', text, 40, 100, false);
+        }
+    }, 400);
+});
