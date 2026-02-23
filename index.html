@@ -17,6 +17,11 @@
 
     <!-- Grid overlay decoration -->
     <div class="grid-overlay"></div>
+    <!-- Grain texture -->
+    <div class="noise-overlay"></div>
+
+    <!-- Hero code ticker (animated code scrolling at bottom of hero) -->
+    <!-- inserted dynamically by JS -->
 
     <!-- Navigation -->
     <nav id="navbar">
@@ -120,56 +125,6 @@
                 <div class="video-upload-hint">
                     <strong>📁 How to add your video:</strong>
                     Place your screen recording at <code>videos/coding.mp4</code> in your project root. Recommended: MP4 format, 1920×1080, under 30MB for fast loading. Trim it to 30–90 seconds for best effect.
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ═══ GAMING VIDEO SHOWCASE ═══ -->
-    <section id="video-showcase-gaming" style="padding-top: 2rem;">
-        <div class="video-showcase-grid" style="direction: rtl;">
-            <!-- Text Content - Gaming -->
-            <div class="video-text reveal" style="direction: ltr;">
-                <span class="section-label">Game Footage</span>
-                <h2>Watch Me <span style="background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Game</span></h2>
-                <p>From Free Fire booyahs to CODM ranked grind — raw gameplay footage, no edits. See the same precision and focus I bring to code, applied to competitive gaming.</p>
-                <ul class="video-feature-list">
-                    <li>Free Fire squad wins & solo clutches</li>
-                    <li>Call of Duty Mobile ranked plays</li>
-                    <li>Geometry Dash level runs</li>
-                    <li>Tournament highlights</li>
-                </ul>
-                <div class="video-upload-hint" style="border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.05);">
-                    <strong style="color: var(--accent-purple);">📁 How to add your video:</strong>
-                    Place your gameplay recording at <code>videos/gaming.mp4</code> in your project root. Best results: 16:9 ratio, MP4 format. Highlight clips of 30–90 seconds work great.
-                </div>
-            </div>
-
-            <!-- Tablet Mockup - Gaming Video -->
-            <div class="tablet-mockup reveal" style="direction: ltr;">
-                <div class="tablet-label">🎮 GAMEPLAY</div>
-                <div class="tablet-frame">
-                    <div class="tablet-camera"></div>
-                    <div class="tablet-screen">
-                        <!--
-                            REPLACE src WITH YOUR GAMING SCREEN RECORDING:
-                            Option A — local file: src="videos/gaming.mp4"
-                            Option B — hosted URL: src="https://yourdomain.com/gaming.mp4"
-                        -->
-                        <video
-                            autoplay
-                            loop
-                            muted
-                            playsinline
-                            src="videos/gaming.mp4"
-                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                        ></video>
-                        <div class="tv-placeholder" style="border-radius: 10px;">
-                            <div class="tv-placeholder-icon">🎮</div>
-                            <div class="tv-placeholder-text">Add your gameplay<br>recording here<br><br><code style="font-size:0.7rem;color:rgba(168,85,247,0.6)">videos/gaming.mp4</code></div>
-                        </div>
-                    </div>
-                    <div class="tablet-home-bar"></div>
                 </div>
             </div>
         </div>
@@ -478,6 +433,56 @@
                 </div>
             </div>
 
+            <!-- ═══ GAMING VIDEO SHOWCASE — inside gaming section ═══ -->
+            <div class="gaming-video-showcase reveal" style="margin-bottom: 4rem;">
+                <div class="video-showcase-grid">
+                    <!-- Tablet Mockup - Gaming Video -->
+                    <div class="tablet-mockup">
+                        <div class="tablet-label">🎮 MY GAMEPLAY</div>
+                        <div class="tablet-frame">
+                            <div class="tablet-camera"></div>
+                            <div class="tablet-screen">
+                                <!--
+                                    REPLACE src WITH YOUR GAMING SCREEN RECORDING:
+                                    Option A — local file: src="videos/gaming.mp4"
+                                    Option B — hosted URL: src="https://yourdomain.com/gaming.mp4"
+                                -->
+                                <video
+                                    autoplay
+                                    loop
+                                    muted
+                                    playsinline
+                                    src="videos/gaming.mp4"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                ></video>
+                                <div class="tv-placeholder" style="border-radius: 10px;">
+                                    <div class="tv-placeholder-icon">🎮</div>
+                                    <div class="tv-placeholder-text">Add your gameplay<br>recording here<br><br><code style="font-size:0.7rem;color:rgba(168,85,247,0.6)">videos/gaming.mp4</code></div>
+                                </div>
+                            </div>
+                            <div class="tablet-home-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Text side -->
+                    <div class="video-text">
+                        <span class="section-label">Raw Footage</span>
+                        <h2 style="font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;line-height:1.2;">Watch Me <span style="background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Game</span></h2>
+                        <p style="color:var(--text-secondary);line-height:1.8;font-size:1.05rem;">From Free Fire booyahs to CODM ranked grinds — raw gameplay footage. The same precision and focus I bring to code, applied to competitive gaming.</p>
+                        <ul class="video-feature-list">
+                            <li>Free Fire squad wins & solo clutches</li>
+                            <li>Call of Duty Mobile ranked plays</li>
+                            <li>Geometry Dash level completions</li>
+                            <li>Tournament highlight moments</li>
+                        </ul>
+                        <div class="video-upload-hint" style="border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.05);">
+                            <strong style="color:var(--accent-purple);">📁 How to add your video:</strong>
+                            Place your gameplay at <code>videos/gaming.mp4</code>. MP4 format, 30–90 second highlight clips work best. Drop it in and it auto-plays on loop.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="tournament-banner reveal">
                 <div class="tournament-status-pill"><span class="live-dot"></span>TOURNAMENT HUB</div>
                 <h3>🏆 KingzAlkhassim Tournaments</h3>
@@ -610,7 +615,7 @@
             <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
                 <p style="color: var(--text-secondary); margin-bottom: 1rem;"><strong>Prefer to email or call?</strong></p>
                 <p style="color: var(--accent-cyan); font-size: 1.1rem; font-weight: 600;">
-                    📧 <a href="mailto:kingzdongd@gmail.com" style="color:inherit;">kingzdongd@gmail.com</a><br>
+                    📧 <a href="/cdn-cgi/l/email-protection#600b090e071a040f0e070420070d01090c4e030f0d" style="color:inherit;"><span class="__cf_email__" data-cfemail="8fe4e6e1e8f5ebe0e1e8ebcfe8e2eee6e3a1ece0e2">[email&#160;protected]</span></a><br>
                     📱 +234(0)8032775925
                 </p>
             </div>
@@ -670,7 +675,7 @@
             <div class="footer-section">
                 <h3>Contact Info</h3>
                 <ul>
-                    <li><a href="mailto:kingzdongd@gmail.com">kingzdongd@gmail.com</a></li>
+                    <li><a href="/cdn-cgi/l/email-protection#b1dad8dfd6cbd5dedfd6d5f1d6dcd0d8dd9fd2dedc"><span class="__cf_email__" data-cfemail="53383a3d3429373c3d343713343e323a3f7d303c3e">[email&#160;protected]</span></a></li>
                     <li><a href="tel:+2348032775925">+234(0)8032775925</a></li>
                     <li style="color: var(--text-secondary);">Kaduna, Nigeria</li>
                 </ul>
@@ -714,39 +719,97 @@
         </a>
     </div>
 
-    <script src="js/script.js"></script>
+        <script src="js/script.js"></script>
     <script>
-        // WhatsApp bubble auto-show + hover interaction
+        // ═══ WHATSAPP BUBBLE LOGIC ═══
         const waBubble = document.getElementById('waBubble');
         const waBtn    = document.getElementById('waBtn');
         const waFloat  = document.getElementById('waFloat');
 
-        // Auto-show the bubble after 4 seconds, then hide after 8s
         setTimeout(() => {
             waBubble.classList.add('visible');
             setTimeout(() => {
-                if (!waFloat.matches(':hover')) {
-                    waBubble.classList.remove('visible');
-                }
+                if (!waFloat.matches(':hover')) waBubble.classList.remove('visible');
             }, 8000);
         }, 4000);
 
-        // Show on hover
         waFloat.addEventListener('mouseenter', () => waBubble.classList.add('visible'));
         waFloat.addEventListener('mouseleave', () => waBubble.classList.remove('visible'));
 
-        // Toggle on mobile tap
         waBtn.addEventListener('click', (e) => {
-            // On mobile (no hover), toggle bubble; let link open normally
             if (window.innerWidth <= 768) {
                 if (!waBubble.classList.contains('visible')) {
                     e.preventDefault();
                     waBubble.classList.add('visible');
                     setTimeout(() => waBubble.classList.remove('visible'), 4000);
                 }
-                // Second tap lets the link through naturally
             }
         });
+
+        // ═══ SECTION WATERMARKS ═══
+        const watermarkMap = { services:'01', projects:'02', about:'03', gaming:'04', contact:'05' };
+        Object.entries(watermarkMap).forEach(([id, num]) => {
+            const sec = document.getElementById(id);
+            if (!sec) return;
+            sec.style.position = 'relative';
+            const wm = document.createElement('div');
+            wm.className = 'section-watermark';
+            wm.textContent = num;
+            sec.appendChild(wm);
+        });
+
+        // ═══ HERO CODE TICKER ═══
+        const tickerCode = [
+            '$query = "SELECT * FROM users WHERE id = ?";',
+            'const result = await fetch("/api/optimize");',
+            'function queryOptimize($sql) { /* 45ms to 2ms */ }',
+            'ALTER TABLE orders ADD INDEX idx_user (user_id);',
+            'echo json_encode(["status" => "200 OK"]);',
+            'const db = new MySQL({ host, user, pass, db });',
+            'header("Cache-Control: max-age=86400");',
+            'git commit -m "feat: database query 10x faster"',
+            'npm run build && php artisan optimize',
+            'SELECT SQL_CALC_FOUND_ROWS * FROM products LIMIT 20;',
+        ];
+        const heroSection = document.querySelector('.hero');
+        if (heroSection) {
+            const ticker = document.createElement('div');
+            ticker.className = 'hero-code-ticker';
+            const inner = document.createElement('div');
+            inner.className = 'hero-code-ticker-inner';
+            [...tickerCode, ...tickerCode].forEach(line => {
+                const span = document.createElement('span');
+                span.textContent = line;
+                inner.appendChild(span);
+            });
+            ticker.appendChild(inner);
+            heroSection.appendChild(ticker);
+        }
+
+        // ═══ FLOATING AMBIENT ORBS ═══
+        const orbColors = [
+            'rgba(0,240,255,0.10)',
+            'rgba(168,85,247,0.10)',
+            'rgba(236,72,153,0.08)',
+            'rgba(0,240,255,0.07)',
+            'rgba(168,85,247,0.07)',
+        ];
+        function spawnOrb() {
+            const orb = document.createElement('div');
+            orb.className = 'deco-orb';
+            const size = 150 + Math.random() * 250;
+            const color = orbColors[Math.floor(Math.random() * orbColors.length)];
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 100;
+            const dx = (Math.random() - 0.5) * 200 + 'px';
+            const dy = (Math.random() - 0.5) * 200 + 'px';
+            const duration = 12 + Math.random() * 18;
+            orb.style.cssText = `width:${size}px;height:${size}px;background:${color};left:${startX}%;top:${startY}%;--dx:${dx};--dy:${dy};animation-duration:${duration}s;animation-delay:${Math.random()*3}s;`;
+            document.body.appendChild(orb);
+            setTimeout(() => orb.remove(), (duration + 6) * 1000);
+        }
+        for (let i = 0; i < 5; i++) spawnOrb();
+        setInterval(spawnOrb, 4000);
     </script>
 </body>
 </html>
