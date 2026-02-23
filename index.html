@@ -931,10 +931,23 @@
         // To go LIVE:  set IS_LIVE = true, fill in STREAM_MODE
         // To go OFFLINE: set IS_LIVE = false
         // ─────────────────────────────────────────────────
-        const IS_LIVE       = false;          // ← change to true when you go live
-        const STREAM_MODE   = 'coding';       // ← 'coding' or 'gaming'
-        const STREAM_TITLE  = 'PHP & MySQL Optimization — Live Build';  // stream title shown in panel
-        const STREAM_DESC   = 'Watching KingzAlkhassim build and optimize a real PHP + MySQL project live. Drop your questions in the chat!';
+        // =========================================================
+        // =================== GOING LIVE? ========================
+        // =========================================================
+        //
+        //   STEP 1 — Change false to true when you go live
+        //   STEP 2 — Set mode to 'gaming' or 'coding'
+        //   STEP 3 — Write your stream title
+        //   STEP 4 — Save file and push to GitHub
+        //
+        const IS_LIVE      = true;        // 👈 false = offline  |  true = live
+        const STREAM_MODE  = 'coding';     // 👈 'coding'  or  'gaming'
+        const STREAM_TITLE = 'PHP & MySQL Optimization — Live Build'; // 👈 your title
+        const STREAM_DESC  = 'Watching KingzAlkhassim build and optimize a real PHP + MySQL project live. Drop your questions in the chat!';
+        //
+        // =========================================================
+        // ================== DONE — THAT'S IT =====================
+        // =========================================================
 
         const liveFrame      = document.getElementById('liveFrame');
         const offlineFrame   = document.getElementById('offlineFrame');
