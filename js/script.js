@@ -18,10 +18,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     });
 });
@@ -32,14 +29,13 @@ function checkReveal() {
     reveals.forEach(element => {
         const windowHeight = window.innerHeight;
         const elementTop = element.getBoundingClientRect().top;
-        const elementVisible = 150;
-        if (elementTop < windowHeight - elementVisible) {
+        if (elementTop < windowHeight - 150) {
             element.classList.add('active');
         }
     });
 }
 window.addEventListener('scroll', checkReveal);
-checkReveal(); 
+checkReveal();
 
 // 3. Mobile Menu Toggle
 const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
@@ -70,7 +66,6 @@ async function submitToWeb3Forms(event, successAction) {
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.textContent;
 
-    // Show loading state
     submitBtn.textContent = "Sending...";
     submitBtn.disabled = true;
 
@@ -134,8 +129,8 @@ document.getElementById('tournamentForm').addEventListener('submit', (e) => {
 });
 
 // 5. Tournament Modal Open/Close
-const openBtn    = document.getElementById('openTournamentModal');
-const closeBtn   = document.getElementById('closeModal');
+const openBtn  = document.getElementById('openTournamentModal');
+const closeBtn = document.getElementById('closeModal');
 
 openBtn.addEventListener('click', () => {
     tourModal.classList.add('open');
@@ -143,231 +138,44 @@ openBtn.addEventListener('click', () => {
 });
 
 closeBtn.addEventListener('click', closeModal);
-
-tourModal.addEventListener('click', e => { 
-    if (e.target === tourModal) closeModal(); 
-});
-
+tourModal.addEventListener('click', e => { if (e.target === tourModal) closeModal(); });
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && tourModal.classList.contains('open')) closeModal();
 });
 
-
-// ═══════════════════════════════════════════════════════════
-// TYPING ANIMATION SYSTEM
-// Add this to your existing script.js file at the bottom
-// ═══════════════════════════════════════════════════════════
-
-/**
- * Typing Animation Function
- * @param {string} elementSelector - CSS selector for the element
- * @param {string} text - Text to type out
- * @param {number} speed - Typing speed in milliseconds (default: 80)
- * @param {number} delay - Delay before starting (default: 0)
- * @param {boolean} cursor - Show blinking cursor (default: true)
- */
+// 6. Typing Animation System
 function typeText(elementSelector, text, speed = 80, delay = 0, cursor = true) {
     const element = document.querySelector(elementSelector);
     if (!element) return;
-
-    // Store original text
-    const originalText = text;
     element.textContent = '';
-    
-    // Add cursor if enabled
-    if (cursor) {
-        element.classList.add('typing-cursor');
-    }
-
+    if (cursor) element.classList.add('typing-cursor');
     setTimeout(() => {
         let i = 0;
         const typeInterval = setInterval(() => {
-            if (i < originalText.length) {
-                element.textContent += originalText.charAt(i);
-                i++;
+            if (i < text.length) {
+                element.textContent += text.charAt(i++);
             } else {
                 clearInterval(typeInterval);
-                // Remove cursor after typing completes
-                if (cursor) {
-                    setTimeout(() => {
-                        element.classList.remove('typing-cursor');
-                    }, 1000);
-                }
+                if (cursor) setTimeout(() => element.classList.remove('typing-cursor'), 1000);
             }
         }, speed);
     }, delay);
 }
 
-/**
- * Typing Animation for Multiple Lines
- * Types out text line by line with pauses
- */
-function typeMultiline(elementSelector, lines, speed = 80, linePause = 500) {
-    const element = document.querySelector(elementSelector);
-    if (!element) return;
-
-    element.textContent = '';
-    element.classList.add('typing-cursor');
-    
-    let currentLine = 0;
-    let currentChar = 0;
-
-    function typeNextChar() {
-        if (currentLine >= lines.length) {
-            element.classList.remove('typing-cursor');
-            return;
-        }
-
-        const line = lines[currentLine];
-        
-        if (currentChar < line.length) {
-            element.textContent += line.charAt(currentChar);
-            currentChar++;
-            setTimeout(typeNextChar, speed);
-        } else {
-            // Finished current line, move to next after pause
-            if (currentLine < lines.length - 1) {
-                element.textContent += '\n';
-            }
-            currentLine++;
-            currentChar = 0;
-            setTimeout(typeNextChar, linePause);
-        }
-    }
-
-    typeNextChar();
-}
-
-/**
- * Initialize typing animations when elements come into view
- */
 function initTypingAnimations() {
-    // Create IntersectionObserver for scroll-triggered typing
     const typingObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && !entry.target.dataset.typed) {
                 entry.target.dataset.typed = 'true';
-                const text = entry.target.dataset.typeText;
+                const text  = entry.target.dataset.typeText;
                 const speed = parseInt(entry.target.dataset.typeSpeed) || 80;
                 const delay = parseInt(entry.target.dataset.typeDelay) || 0;
-                
                 typeText(`#${entry.target.id}`, text, speed, delay, true);
             }
         });
     }, { threshold: 0.5 });
 
-    // Observe elements with data-type-text attribute
-    document.querySelectorAll('[data-type-text]').forEach(el => {
-        typingObserver.observe(el);
-    });
+    document.querySelectorAll('[data-type-text]').forEach(el => typingObserver.observe(el));
 }
 
-
-// ═══════════════════════════════════════════════════════════
-// TYPING ANIMATION SYSTEM
-// Add this to your existing script.js file at the bottom
-// ═══════════════════════════════════════════════════════════
-
-/**
- * Typing Animation Function
- * @param {string} elementSelector - CSS selector for the element
- * @param {string} text - Text to type out
- * @param {number} speed - Typing speed in milliseconds (default: 80)
- * @param {number} delay - Delay before starting (default: 0)
- * @param {boolean} cursor - Show blinking cursor (default: true)
- */
-function typeText(elementSelector, text, speed = 80, delay = 0, cursor = true) {
-    const element = document.querySelector(elementSelector);
-    if (!element) return;
-
-    // Store original text
-    const originalText = text;
-    element.textContent = '';
-    
-    // Add cursor if enabled
-    if (cursor) {
-        element.classList.add('typing-cursor');
-    }
-
-    setTimeout(() => {
-        let i = 0;
-        const typeInterval = setInterval(() => {
-            if (i < originalText.length) {
-                element.textContent += originalText.charAt(i);
-                i++;
-            } else {
-                clearInterval(typeInterval);
-                // Remove cursor after typing completes
-                if (cursor) {
-                    setTimeout(() => {
-                        element.classList.remove('typing-cursor');
-                    }, 1000);
-                }
-            }
-        }, speed);
-    }, delay);
-}
-
-/**
- * Typing Animation for Multiple Lines
- * Types out text line by line with pauses
- */
-function typeMultiline(elementSelector, lines, speed = 80, linePause = 500) {
-    const element = document.querySelector(elementSelector);
-    if (!element) return;
-
-    element.textContent = '';
-    element.classList.add('typing-cursor');
-    
-    let currentLine = 0;
-    let currentChar = 0;
-
-    function typeNextChar() {
-        if (currentLine >= lines.length) {
-            element.classList.remove('typing-cursor');
-            return;
-        }
-
-        const line = lines[currentLine];
-        
-        if (currentChar < line.length) {
-            element.textContent += line.charAt(currentChar);
-            currentChar++;
-            setTimeout(typeNextChar, speed);
-        } else {
-            // Finished current line, move to next after pause
-            if (currentLine < lines.length - 1) {
-                element.textContent += '\n';
-            }
-            currentLine++;
-            currentChar = 0;
-            setTimeout(typeNextChar, linePause);
-        }
-    }
-
-    typeNextChar();
-}
-
-/**
- * Initialize typing animations when elements come into view
- */
-function initTypingAnimations() {
-    // Create IntersectionObserver for scroll-triggered typing
-    const typingObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !entry.target.dataset.typed) {
-                entry.target.dataset.typed = 'true';
-                const text = entry.target.dataset.typeText;
-                const speed = parseInt(entry.target.dataset.typeSpeed) || 80;
-                const delay = parseInt(entry.target.dataset.typeDelay) || 0;
-                
-                typeText(`#${entry.target.id}`, text, speed, delay, true);
-            }
-        });
-    }, { threshold: 0.5 });
-
-    // Observe elements with data-type-text attribute
-    document.querySelectorAll('[data-type-text]').forEach(el => {
-        typingObserver.observe(el);
-    });
-}
+document.addEventListener('DOMContentLoaded', initTypingAnimations);
