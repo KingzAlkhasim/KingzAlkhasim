@@ -33,6 +33,7 @@
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#gaming">🎮 Gaming</a></li>
+                <li><a href="#live" id="nav-live-link">🔴 Live</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
             <a href="#contact" class="cta-nav">Get Free Audit</a>
@@ -568,6 +569,173 @@
         </div>
     </div>
 
+    <!-- ════════════════════════════════════════════════
+         LIVE STREAM SECTION
+    ════════════════════════════════════════════════ -->
+    <div id="live-wrapper">
+        <div class="live-bg-glow"></div>
+        <section id="live">
+
+            <div class="section-header reveal">
+                <span class="section-label">On Air</span>
+                <h2 class="section-title">KingzAlkhassim — <span class="live-title-gradient">Live Stream</span></h2>
+                <p class="section-subtitle">Coding sessions, gaming matches, and everything in between. Watch live or catch the latest upload.</p>
+            </div>
+
+            <!-- ── Live Status Badge ── -->
+            <div class="live-status-bar reveal">
+                <div class="live-badge-online" id="liveBadgeOn">
+                    <span class="live-ring"></span>
+                    <span class="live-ring live-ring-2"></span>
+                    <span class="live-dot-center"></span>
+                    <span class="live-badge-text">● LIVE NOW</span>
+                </div>
+                <div class="live-badge-offline" id="liveBadgeOff">
+                    <span class="offline-icon">📴</span>
+                    <span>Currently Offline</span>
+                </div>
+                <div class="live-mode-pills" id="liveModePills">
+                    <span class="live-mode-pill pill-coding" id="pillCoding">💻 Coding</span>
+                    <span class="live-mode-pill pill-gaming" id="pillGaming">🎮 Gaming</span>
+                </div>
+            </div>
+
+            <!-- ── Stream Container ── -->
+            <div class="stream-container reveal">
+
+                <!-- LEFT: Player -->
+                <div class="stream-player-wrap">
+
+                    <!-- LIVE frame -->
+                    <div class="stream-frame live-frame" id="liveFrame">
+                        <div class="stream-corner sc-tl"></div>
+                        <div class="stream-corner sc-tr"></div>
+                        <div class="stream-corner sc-bl"></div>
+                        <div class="stream-corner sc-br"></div>
+                        <div class="stream-scanline"></div>
+                        <div class="stream-live-tag"><span class="stream-live-dot"></span> LIVE</div>
+                        <!--
+                            HOW TO WIRE YOUR YOUTUBE LIVE:
+                            1. Go to studio.youtube.com
+                            2. Click your profile → Settings → Channel → Basic Info
+                            3. Copy your Channel ID (starts with UC...)
+                            4. Replace UCxxxxxxxxxxxxxxxxxxxxxxxxx below with your Channel ID
+                        -->
+                        <iframe
+                            id="youtubeEmbed"
+                            src="https://www.youtube.com/embed/live_stream?channel=UCxxxxxxxxxxxxxxxxxxxxxxxxx&autoplay=1&mute=1"
+                            title="KingzAlkhassim Live Stream"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
+
+                    <!-- OFFLINE frame -->
+                    <div class="stream-frame offline-frame" id="offlineFrame">
+                        <div class="stream-corner sc-tl"></div>
+                        <div class="stream-corner sc-tr"></div>
+                        <div class="stream-corner sc-bl"></div>
+                        <div class="stream-corner sc-br"></div>
+                        <div class="tv-static-lines"></div>
+                        <div class="offline-screen-content">
+                            <div class="offline-avatar">👾</div>
+                            <h3 class="offline-title">KingzAlkhassim</h3>
+                            <p class="offline-sub">is not streaming right now</p>
+                            <div class="offline-schedule">
+                                <div class="offline-schedule-label">⏰ Next Stream</div>
+                                <div class="offline-schedule-val">Check socials for schedule</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT: Info panel -->
+                <div class="stream-info-panel">
+
+                    <div class="stream-mode-selector">
+                        <button class="stream-mode-btn active" id="modeBtnCoding" onclick="setStreamMode('coding')">
+                            <span class="mode-icon">💻</span>
+                            <span class="mode-label">Coding</span>
+                            <span class="mode-sub">PHP · MySQL · JS</span>
+                        </button>
+                        <button class="stream-mode-btn" id="modeBtnGaming" onclick="setStreamMode('gaming')">
+                            <span class="mode-icon">🎮</span>
+                            <span class="mode-label">Gaming</span>
+                            <span class="mode-sub">FF · CODM · GD</span>
+                        </button>
+                    </div>
+
+                    <div class="stream-stats">
+                        <div class="stream-stat">
+                            <div class="stream-stat-icon">👁️</div>
+                            <div class="stream-stat-val" id="viewerCount">—</div>
+                            <div class="stream-stat-key">Viewers</div>
+                        </div>
+                        <div class="stream-stat">
+                            <div class="stream-stat-icon">⏱️</div>
+                            <div class="stream-stat-val" id="streamDuration">—</div>
+                            <div class="stream-stat-key">Duration</div>
+                        </div>
+                        <div class="stream-stat">
+                            <div class="stream-stat-icon">📡</div>
+                            <div class="stream-stat-val">HD</div>
+                            <div class="stream-stat-key">Quality</div>
+                        </div>
+                    </div>
+
+                    <div class="stream-desc-box">
+                        <div class="stream-desc-title" id="streamTitle">Stream Offline</div>
+                        <div class="stream-desc-body" id="streamDesc">KingzAlkhassim is not live right now. Subscribe on YouTube and hit the bell 🔔 to get notified the moment a stream starts.</div>
+                    </div>
+
+                    <div class="stream-actions">
+                        <a href="https://youtube.com/@kingzalkhassim?sub_confirmation=1" target="_blank" rel="noopener" class="stream-subscribe-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                            Subscribe on YouTube
+                        </a>
+                        <a href="https://youtube.com/@kingzalkhassim" target="_blank" rel="noopener" class="stream-channel-btn">View Channel →</a>
+                    </div>
+
+                    <div class="stream-notify-box" id="streamNotifyBox">
+                        <div class="stream-notify-icon">🔔</div>
+                        <div class="stream-notify-text">
+                            <strong>Don't miss the next stream!</strong><br>
+                            Subscribe + hit the bell on YouTube to get notified the moment KingzAlkhassim goes live.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ── Latest Videos (shown when offline) ── -->
+            <div class="latest-videos-section" id="latestVideosSection">
+                <div class="latest-videos-header">
+                    <span class="latest-videos-label">📼 Latest from the Channel</span>
+                    <a href="https://youtube.com/@kingzalkhassim" target="_blank" rel="noopener" class="latest-videos-more">See all →</a>
+                </div>
+                <div class="latest-videos-grid">
+                    <a href="https://youtube.com/@kingzalkhassim" target="_blank" rel="noopener" class="latest-video-card reveal">
+                        <div class="lv-thumb"><div class="lv-thumb-placeholder">▶</div><span class="lv-duration">—:——</span></div>
+                        <div class="lv-info"><div class="lv-title">Latest Video</div><div class="lv-meta">@kingzalkhassim · YouTube</div></div>
+                    </a>
+                    <a href="https://youtube.com/@kingzalkhassim" target="_blank" rel="noopener" class="latest-video-card reveal">
+                        <div class="lv-thumb"><div class="lv-thumb-placeholder">▶</div><span class="lv-duration">—:——</span></div>
+                        <div class="lv-info"><div class="lv-title">Latest Video</div><div class="lv-meta">@kingzalkhassim · YouTube</div></div>
+                    </a>
+                    <a href="https://youtube.com/@kingzalkhassim" target="_blank" rel="noopener" class="latest-video-card reveal">
+                        <div class="lv-thumb"><div class="lv-thumb-placeholder">▶</div><span class="lv-duration">—:——</span></div>
+                        <div class="lv-info"><div class="lv-title">Latest Video</div><div class="lv-meta">@kingzalkhassim · YouTube</div></div>
+                    </a>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <div class="section-divider"></div>
+
     <!-- Contact Section -->
     <section id="contact">
         <div class="section-header reveal">
@@ -747,7 +915,7 @@
         });
 
         // ═══ SECTION WATERMARKS ═══
-        const watermarkMap = { services:'01', projects:'02', about:'03', gaming:'04', contact:'05' };
+        const watermarkMap = { services:'01', projects:'02', about:'03', gaming:'04', live:'05', contact:'06' };
         Object.entries(watermarkMap).forEach(([id, num]) => {
             const sec = document.getElementById(id);
             if (!sec) return;
@@ -757,6 +925,85 @@
             wm.textContent = num;
             sec.appendChild(wm);
         });
+
+        // ═══ LIVE STREAM LOGIC ═══
+        // ─────────────────────────────────────────────────
+        // To go LIVE:  set IS_LIVE = true, fill in STREAM_MODE
+        // To go OFFLINE: set IS_LIVE = false
+        // ─────────────────────────────────────────────────
+        const IS_LIVE       = false;          // ← change to true when you go live
+        const STREAM_MODE   = 'coding';       // ← 'coding' or 'gaming'
+        const STREAM_TITLE  = 'PHP & MySQL Optimization — Live Build';  // stream title shown in panel
+        const STREAM_DESC   = 'Watching KingzAlkhassim build and optimize a real PHP + MySQL project live. Drop your questions in the chat!';
+
+        const liveFrame      = document.getElementById('liveFrame');
+        const offlineFrame   = document.getElementById('offlineFrame');
+        const liveBadgeOn    = document.getElementById('liveBadgeOn');
+        const liveBadgeOff   = document.getElementById('liveBadgeOff');
+        const liveModePills  = document.getElementById('liveModePills');
+        const pillCoding     = document.getElementById('pillCoding');
+        const pillGaming     = document.getElementById('pillGaming');
+        const streamTitle    = document.getElementById('streamTitle');
+        const streamDesc     = document.getElementById('streamDesc');
+        const notifyBox      = document.getElementById('streamNotifyBox');
+        const latestVids     = document.getElementById('latestVideosSection');
+        const navLiveLink    = document.getElementById('nav-live-link');
+        const viewerCount    = document.getElementById('viewerCount');
+        const streamDuration = document.getElementById('streamDuration');
+
+        function setStreamMode(mode) {
+            document.querySelectorAll('.stream-mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(mode === 'coding' ? 'modeBtnCoding' : 'modeBtnGaming').classList.add('active');
+            pillCoding.classList.toggle('active', mode === 'coding');
+            pillGaming.classList.toggle('active', mode === 'gaming');
+        }
+
+        function applyLiveState() {
+            if (IS_LIVE) {
+                liveFrame.style.display    = 'block';
+                offlineFrame.style.display = 'none';
+                liveBadgeOn.style.display  = 'flex';
+                liveBadgeOff.style.display = 'none';
+                liveModePills.style.display = 'flex';
+                streamTitle.textContent    = STREAM_TITLE;
+                streamDesc.textContent     = STREAM_DESC;
+                if (notifyBox) notifyBox.style.display = 'none';
+                if (latestVids) latestVids.style.display = 'none';
+                setStreamMode(STREAM_MODE);
+                // Animate viewer count mock
+                let viewers = Math.floor(Math.random() * 40) + 5;
+                if (viewerCount) viewerCount.textContent = viewers;
+                // Duration timer
+                let seconds = 0;
+                setInterval(() => {
+                    seconds++;
+                    const h = Math.floor(seconds/3600);
+                    const m = Math.floor((seconds%3600)/60);
+                    const s = seconds % 60;
+                    if (streamDuration) streamDuration.textContent =
+                        (h ? h+'h ' : '') + String(m).padStart(2,'0')+'m '+String(s).padStart(2,'0')+'s';
+                }, 1000);
+                // Nav pulse
+                if (navLiveLink) {
+                    navLiveLink.classList.add('nav-live-active');
+                }
+            } else {
+                liveFrame.style.display    = 'none';
+                offlineFrame.style.display = 'block';
+                liveBadgeOn.style.display  = 'none';
+                liveBadgeOff.style.display = 'flex';
+                liveModePills.style.display = 'none';
+                streamTitle.textContent    = 'Stream Offline';
+                streamDesc.textContent     = 'KingzAlkhassim is not live right now. Subscribe on YouTube and hit the bell 🔔 to get notified the moment a stream starts.';
+                if (notifyBox) notifyBox.style.display = 'flex';
+                if (latestVids) latestVids.style.display = 'block';
+                if (viewerCount) viewerCount.textContent = '—';
+                if (streamDuration) streamDuration.textContent = '—';
+                if (navLiveLink) navLiveLink.classList.remove('nav-live-active');
+            }
+        }
+
+        applyLiveState();
 
         // ═══ HERO CODE TICKER ═══
         const tickerCode = [
