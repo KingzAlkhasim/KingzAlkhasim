@@ -955,11 +955,11 @@
         .whatsapp-float {
             position: fixed;
             bottom: 28px;
-            left: 28px;
+            right: 28px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: flex-end;
             gap: 10px;
         }
 
@@ -975,7 +975,7 @@
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-            transform-origin: bottom left;
+            transform-origin: bottom right;
         }
 
         .wa-bubble.visible {
@@ -997,12 +997,12 @@
             line-height: 1.4;
         }
 
-        /* Triangle pointer */
+        /* Triangle pointer — points down-right toward the button */
         .wa-bubble::after {
             content: '';
             position: absolute;
             bottom: -8px;
-            left: 20px;
+            right: 20px;
             width: 0; height: 0;
             border-left: 8px solid transparent;
             border-right: 8px solid transparent;
@@ -1149,7 +1149,7 @@
             .t-meta-item { padding: 0.8rem 1.2rem; min-width: 100px; flex: 1 1 120px; }
             .footer-container { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
             .trust-badge { font-size: 0.85rem; padding: 0.8rem 1.2rem; text-align: center; line-height: 1.6; }
-            .whatsapp-float { bottom: 20px; left: 16px; }
+            .whatsapp-float { bottom: 20px; right: 16px; }
             .wa-btn { width: 52px; height: 52px; }
             .wa-btn svg { width: 26px; height: 26px; }
         }
@@ -1575,26 +1575,399 @@
             box-shadow: 0 0 12px var(--accent-cyan);
         }
 
-        /* Corner accent lines on cards */
-        .service-card.quick-fix::after {
+
+        /* ═══════════════════════════════════════════════════════
+           ENHANCED PRO DECORATIONS
+        ═══════════════════════════════════════════════════════ */
+
+        /* ── Corner bracket accents on ALL service cards ── */
+        .service-card::after {
             content: '';
             position: absolute;
-            top: 0; right: 0;
-            width: 60px; height: 60px;
-            border-top: 2px solid rgba(245,158,11,0.4);
-            border-right: 2px solid rgba(245,158,11,0.4);
-            border-radius: 0 20px 0 0;
+            top: 12px; right: 12px;
+            width: 24px; height: 24px;
+            border-top: 1.5px solid rgba(0,240,255,0.2);
+            border-right: 1.5px solid rgba(0,240,255,0.2);
+            border-radius: 0 6px 0 0;
+            transition: all 0.4s ease;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            bottom: 12px; left: 12px;
+            width: 24px; height: 24px;
+            border-bottom: 1.5px solid rgba(168,85,247,0.2);
+            border-left: 1.5px solid rgba(168,85,247,0.2);
+            border-radius: 0 0 0 6px;
+            transition: all 0.4s ease;
+            opacity: 1;
+            background: none;
+        }
+        .service-card:hover::after {
+            border-color: var(--accent-cyan);
+            width: 32px; height: 32px;
+        }
+        .service-card:hover::before {
+            border-color: var(--accent-purple);
+            width: 32px; height: 32px;
+        }
+        /* Quick-fix card keeps its gradient overlay before, so we override */
+        .service-card.quick-fix::after {
+            border-top-color: rgba(245,158,11,0.4);
+            border-right-color: rgba(245,158,11,0.4);
+        }
+        .service-card.quick-fix:hover::after {
+            border-color: #f59e0b;
         }
 
-        /* Neon tag accent for section labels */
+        /* ── Neon tag accent for section labels ── */
         .section-label {
             position: relative;
         }
-
-        .section-label::before, .section-label::after {
-            content: '//';
-            color: rgba(0,240,255,0.3);
+        .section-label::before {
+            content: '< ';
+            color: rgba(0,240,255,0.35);
             font-family: 'Space Mono', monospace;
-            margin: 0 0.4rem;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+        }
+        .section-label::after {
+            content: ' />';
+            color: rgba(0,240,255,0.35);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        /* ── Animated hero code ticker ── */
+        .hero-code-ticker {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 0; right: 0;
+            overflow: hidden;
+            height: 28px;
+            pointer-events: none;
+        }
+        .hero-code-ticker-inner {
+            display: flex;
+            gap: 3rem;
+            animation: tickerScroll 28s linear infinite;
+            white-space: nowrap;
+        }
+        .hero-code-ticker-inner span {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(0,240,255,0.18);
+            flex-shrink: 0;
+        }
+        @keyframes tickerScroll {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+
+        /* ── Floating orbs decoration (injected via JS) ── */
+        .deco-orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            filter: blur(80px);
+            opacity: 0;
+            animation: orbDrift linear infinite;
+        }
+        @keyframes orbDrift {
+            0%   { transform: translate(0, 0) scale(1); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0.8); opacity: 0; }
+        }
+
+        /* ── Section number watermarks ── */
+        .section-watermark {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(4rem, 10vw, 9rem);
+            font-weight: 700;
+            color: rgba(255,255,255,0.025);
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+            letter-spacing: -0.05em;
+        }
+
+        /* ── Glowing line decoration above section titles ── */
+        .section-header { position: relative; }
+        .section-header::before {
+            content: '';
+            display: block;
+            width: 60px; height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            margin: 0 auto 1.5rem;
+            border-radius: 2px;
+            box-shadow: 0 0 12px rgba(0,240,255,0.5);
+        }
+
+        /* ── Project card corner brackets ── */
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 12px; left: 12px;
+            width: 20px; height: 20px;
+            border-top: 1.5px solid rgba(0,240,255,0.15);
+            border-left: 1.5px solid rgba(0,240,255,0.15);
+            border-radius: 4px 0 0 0;
+            transition: all 0.4s ease;
+            z-index: 2;
+        }
+        .project-card:hover::before {
+            border-color: var(--accent-purple);
+            width: 28px; height: 28px;
+        }
+
+        /* ── Scanline overlay on hero ── */
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 3px,
+                rgba(0,0,0,0.03) 3px,
+                rgba(0,0,0,0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero-container { position: relative; z-index: 1; }
+
+        /* ── Glowing stat numbers ── */
+        .stat-number {
+            text-shadow: 0 0 20px rgba(0,240,255,0.4);
+        }
+
+        /* ── Tech item inner glow ring ── */
+        .tech-item:hover {
+            background: rgba(0,240,255,0.05);
+        }
+        .tech-item::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(168,85,247,0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+        .tech-item { position: relative; }
+        .tech-item:hover::after { opacity: 1; }
+
+        /* ── About section decorative line ── */
+        .about-content {
+            position: relative;
+        }
+        .about-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -2rem;
+            width: 2px; height: 100%;
+            background: linear-gradient(180deg, transparent, var(--accent-cyan), var(--accent-purple), transparent);
+            opacity: 0.3;
+        }
+
+        /* ── Glow ring on floating card ── */
+        .floating-card {
+            position: relative;
+        }
+        .floating-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 21px;
+            background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(168,85,247,0.15), rgba(236,72,153,0.1));
+            z-index: -1;
+            animation: cardRingRotate 6s linear infinite;
+        }
+        @keyframes cardRingRotate {
+            0%   { filter: hue-rotate(0deg); opacity: 0.5; }
+            50%  { opacity: 1; }
+            100% { filter: hue-rotate(360deg); opacity: 0.5; }
+        }
+
+        /* ── Contact section glowing border ── */
+        .contact-container {
+            position: relative;
+        }
+        .contact-container::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 31px;
+            background: linear-gradient(135deg, rgba(0,240,255,0.12), rgba(168,85,247,0.12), rgba(236,72,153,0.08));
+            z-index: -1;
+            animation: contactGlow 5s ease-in-out infinite alternate;
+        }
+        @keyframes contactGlow {
+            from { opacity: 0.4; }
+            to   { opacity: 1; }
+        }
+
+        /* ── Noise texture overlay (subtle grain) ── */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            opacity: 0.025;
+            z-index: 0;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        /* ── Stat item hover glow ── */
+        .stat-item {
+            transition: transform 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 10px;
+        }
+        .stat-item:hover {
+            transform: scale(1.08);
+            background: rgba(0,240,255,0.04);
+        }
+
+        /* ── Service price glow ── */
+        .service-price {
+            text-shadow: 0 0 25px rgba(0,240,255,0.3);
+        }
+        .service-card.quick-fix .service-price {
+            text-shadow: 0 0 25px rgba(245,158,11,0.4);
+        }
+
+        /* ── Nav logo subtle pulse ── */
+        .logo {
+            animation: logoPulse 4s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { filter: drop-shadow(0 0 4px rgba(0,240,255,0.2)); }
+            50%       { filter: drop-shadow(0 0 12px rgba(0,240,255,0.5)); }
+        }
+
+        /* ── CTA button shimmer ── */
+        .cta-nav {
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-nav::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60px; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: navShimmer 3s ease-in-out infinite 1s;
+        }
+        @keyframes navShimmer {
+            0%   { left: -100%; }
+            50%, 100% { left: 150%; }
+        }
+
+        /* ── Footer brand glow ── */
+        .footer-section h3 {
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── Horizontal scan line accent on section dividers ── */
+        .section-divider {
+            width: 100%; max-width: 1400px; margin: 0 auto;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,240,255,0.3), rgba(168,85,247,0.3), transparent);
+            position: relative;
+        }
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(0,240,255,0.8), rgba(168,85,247,0.8));
+            animation: scanLine 4s ease-in-out infinite;
+        }
+        @keyframes scanLine {
+            0%   { left: 0%; right: 100%; opacity: 1; }
+            50%  { left: 0%; right: 0%; opacity: 1; }
+            75%  { left: 100%; right: 0%; opacity: 0.5; }
+            100% { left: 100%; right: 0%; opacity: 0; }
+        }
+        .section-divider::after {
+            content: '◆';
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.5rem;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px var(--accent-cyan);
+            animation: diamondPulse 2s ease-in-out infinite;
+        }
+        @keyframes diamondPulse {
+            0%, 100% { opacity: 0.6; transform: translate(-50%,-50%) rotate(0deg) scale(1); }
+            50%       { opacity: 1;   transform: translate(-50%,-50%) rotate(45deg) scale(1.3); }
+        }
+
+        /* ── Gaming section extra neon lines ── */
+        #gaming-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(168,85,247,0.6), rgba(0,240,255,0.6), transparent);
+        }
+
+        /* ── Game card shine effect ── */
+        .game-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transition: left 0.6s ease;
+        }
+        .game-card:hover::after {
+            left: 150%;
+        }
+
+        /* ── Video section decorative floating badge ── */
+        .tv-mockup, .tablet-mockup {
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+        }
+
+        /* ── Reveal animation variants for stagger effect ── */
+        .reveal:nth-child(2) { transition-delay: 0.1s; }
+        .reveal:nth-child(3) { transition-delay: 0.2s; }
+        .reveal:nth-child(4) { transition-delay: 0.3s; }
+        .reveal:nth-child(5) { transition-delay: 0.4s; }
+        .reveal:nth-child(6) { transition-delay: 0.5s; }
+
+        /* ── Gamer profile extra inner shimmer ── */
+        .gamer-profile::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -60%;
+            width: 40%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent);
+            animation: profileShimmer 5s ease-in-out infinite 2s;
+        }
+        @keyframes profileShimmer {
+            0%   { left: -60%; }
+            100% { left: 120%; }
+        }
+
+        /* ── Tournament banner top highlight ── */
+        .tournament-banner::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(168,85,247,0.6), rgba(0,240,255,0.6), transparent);
         }
