@@ -3,25 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<meta name="theme-color" content="#0a0a0f">
+    <meta name="theme-color" content="#0a0a0f">
     <meta name="msapplication-TileColor" content="#0a0a0f">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <title>KingzAlkhassim - High-Performance Web Solutions</title>
     <meta name="description" content="Premium web development, database optimization, and technical consulting for ambitious businesses. PHP, MySQL, and JavaScript expertise.">
-    
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-
-<link href="css/style.css" rel="stylesheet">
-    
-    
-  
+    <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
+
+    <!-- Grid overlay decoration -->
+    <div class="grid-overlay"></div>
+
     <!-- Navigation -->
     <nav id="navbar">
         <div class="nav-container">
@@ -36,9 +32,7 @@
             </ul>
             <a href="#contact" class="cta-nav">Get Free Audit</a>
             <button class="mobile-menu-btn">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
         </div>
     </nav>
@@ -79,6 +73,110 @@
         </div>
     </section>
 
+    <!-- ═══ CODING VIDEO SHOWCASE ═══ -->
+    <div class="section-divider"></div>
+    <section id="video-showcase">
+        <div class="video-showcase-grid">
+            <!-- TV Mockup - Coding Video -->
+            <div class="tv-mockup reveal">
+                <div class="tv-label">💻 LIVE CODING</div>
+                <div class="tv-frame">
+                    <div class="tv-screen">
+                        <!--
+                            REPLACE src WITH YOUR CODING SCREEN RECORDING:
+                            Option A — local file: src="videos/coding.mp4"
+                            Option B — hosted URL: src="https://yourdomain.com/coding.mp4"
+                        -->
+                        <video
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            src="videos/coding.mp4"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        ></video>
+                        <div class="tv-placeholder">
+                            <div class="tv-placeholder-icon">💻</div>
+                            <div class="tv-placeholder-text">Add your coding<br>screen recording here<br><br><code style="font-size:0.7rem;color:rgba(0,240,255,0.5)">videos/coding.mp4</code></div>
+                        </div>
+                    </div>
+                    <div class="tv-brand-dot"></div>
+                </div>
+                <div class="tv-stand-neck"></div>
+                <div class="tv-stand-base"></div>
+            </div>
+
+            <!-- Text Content - Coding -->
+            <div class="video-text reveal">
+                <span class="section-label">In Action</span>
+                <h2>Watch Me <span style="background:linear-gradient(135deg,var(--accent-cyan),var(--accent-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Code</span></h2>
+                <p>Real-time PHP, MySQL & JavaScript development. No fluff — just clean, performant code being built from scratch. This is how I tackle complex problems and optimize for speed.</p>
+                <ul class="video-feature-list">
+                    <li>PHP backend architecture & optimization</li>
+                    <li>MySQL query tuning & database design</li>
+                    <li>JavaScript UI components & logic</li>
+                    <li>Live debugging & problem-solving</li>
+                </ul>
+                <div class="video-upload-hint">
+                    <strong>📁 How to add your video:</strong>
+                    Place your screen recording at <code>videos/coding.mp4</code> in your project root. Recommended: MP4 format, 1920×1080, under 30MB for fast loading. Trim it to 30–90 seconds for best effect.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ GAMING VIDEO SHOWCASE ═══ -->
+    <section id="video-showcase-gaming" style="padding-top: 2rem;">
+        <div class="video-showcase-grid" style="direction: rtl;">
+            <!-- Text Content - Gaming -->
+            <div class="video-text reveal" style="direction: ltr;">
+                <span class="section-label">Game Footage</span>
+                <h2>Watch Me <span style="background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Game</span></h2>
+                <p>From Free Fire booyahs to CODM ranked grind — raw gameplay footage, no edits. See the same precision and focus I bring to code, applied to competitive gaming.</p>
+                <ul class="video-feature-list">
+                    <li>Free Fire squad wins & solo clutches</li>
+                    <li>Call of Duty Mobile ranked plays</li>
+                    <li>Geometry Dash level runs</li>
+                    <li>Tournament highlights</li>
+                </ul>
+                <div class="video-upload-hint" style="border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.05);">
+                    <strong style="color: var(--accent-purple);">📁 How to add your video:</strong>
+                    Place your gameplay recording at <code>videos/gaming.mp4</code> in your project root. Best results: 16:9 ratio, MP4 format. Highlight clips of 30–90 seconds work great.
+                </div>
+            </div>
+
+            <!-- Tablet Mockup - Gaming Video -->
+            <div class="tablet-mockup reveal" style="direction: ltr;">
+                <div class="tablet-label">🎮 GAMEPLAY</div>
+                <div class="tablet-frame">
+                    <div class="tablet-camera"></div>
+                    <div class="tablet-screen">
+                        <!--
+                            REPLACE src WITH YOUR GAMING SCREEN RECORDING:
+                            Option A — local file: src="videos/gaming.mp4"
+                            Option B — hosted URL: src="https://yourdomain.com/gaming.mp4"
+                        -->
+                        <video
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            src="videos/gaming.mp4"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        ></video>
+                        <div class="tv-placeholder" style="border-radius: 10px;">
+                            <div class="tv-placeholder-icon">🎮</div>
+                            <div class="tv-placeholder-text">Add your gameplay<br>recording here<br><br><code style="font-size:0.7rem;color:rgba(168,85,247,0.6)">videos/gaming.mp4</code></div>
+                        </div>
+                    </div>
+                    <div class="tablet-home-bar"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
     <!-- Services Section -->
     <section id="services">
         <div class="section-header reveal">
@@ -88,7 +186,6 @@
         </div>
 
         <div class="services-grid">
-            <!-- Quick Fix Service - NEW! -->
             <div class="service-card quick-fix reveal">
                 <span class="service-badge">🚀 High-Priority Service</span>
                 <div class="service-icon">⚡</div>
@@ -105,7 +202,6 @@
                 <a href="#contact" class="service-link">Get Your Audit Now →</a>
             </div>
 
-            <!-- Professional Websites -->
             <div class="service-card reveal">
                 <div class="service-icon">🌐</div>
                 <h3 class="service-title">Professional Websites</h3>
@@ -121,7 +217,6 @@
                 <a href="#contact" class="service-link">Start Your Project →</a>
             </div>
 
-            <!-- E-commerce -->
             <div class="service-card reveal">
                 <div class="service-icon">🛍️</div>
                 <h3 class="service-title">E-commerce Solutions</h3>
@@ -137,7 +232,6 @@
                 <a href="#contact" class="service-link">Launch Your Store →</a>
             </div>
 
-            <!-- Branding -->
             <div class="service-card reveal">
                 <div class="service-icon">🎨</div>
                 <h3 class="service-title">Branding & Identity</h3>
@@ -153,7 +247,6 @@
                 <a href="#contact" class="service-link">Build Your Brand →</a>
             </div>
 
-            <!-- SEO -->
             <div class="service-card reveal">
                 <div class="service-icon">📈</div>
                 <h3 class="service-title">SEO Optimization</h3>
@@ -169,7 +262,6 @@
                 <a href="#contact" class="service-link">Boost Your Rankings →</a>
             </div>
 
-            <!-- Database Optimization -->
             <div class="service-card reveal">
                 <div class="service-icon">⚙️</div>
                 <h3 class="service-title">Database & Backend Work</h3>
@@ -196,7 +288,6 @@
         </div>
 
         <div class="projects-grid">
-            <!-- Project 1 -->
             <div class="project-card reveal">
                 <img src="images/projects/kingxtech.jpg" alt="KingxTech Platform" class="project-image">
                 <div class="project-content">
@@ -216,7 +307,6 @@
                 </div>
             </div>
 
-            <!-- Project 2 -->
             <div class="project-card reveal">
                 <img src="images/projects/the-5th-IQYR7N67dhM-unsplash.jpg" alt="E-commerce Platform" class="project-image">
                 <div class="project-content">
@@ -235,7 +325,6 @@
                 </div>
             </div>
 
-            <!-- Project 3 -->
             <div class="project-card reveal">
                 <img src="images/projects/true-agency-9Bjog5FZ-oc-unsplash.jpg" alt="Fashion Brand Website" class="project-image">
                 <div class="project-content">
@@ -302,17 +391,14 @@
     ════════════════════════════════════════ -->
     <div id="gaming-wrapper">
         <section id="gaming">
-
             <div class="section-header reveal">
                 <span class="section-label">Player One</span>
                 <h2 class="section-title">KingzAlkhassim — <span style="background:linear-gradient(135deg,#a855f7,#00f0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">The Gamer</span></h2>
                 <p class="section-subtitle">Code by day, frag by night. When I'm not optimizing databases, I'm optimizing K/D ratios.</p>
             </div>
 
-            <!-- Gamer Profile Banner -->
             <div class="gamer-profile reveal">
                 <div class="gamer-avatar">🎮</div>
-
                 <div class="gamer-info">
                     <h3>KingzAlkhassim</h3>
                     <p>Mobile & PC Gamer · Tournament Host · Future Fortnite Enjoyer</p>
@@ -323,232 +409,157 @@
                         <span class="gamer-badge pink">⚽ eFootball Pro</span>
                     </div>
                 </div>
-
                 <div class="gamer-stats-mini">
-                    <div class="gamer-stat-mini">
-                        <div class="num">6</div>
-                        <div class="lbl">Games</div>
-                    </div>
-                    <div class="gamer-stat-mini">
-                        <div class="num">∞</div>
-                        <div class="lbl">Hours Played</div>
-                    </div>
-                    <div class="gamer-stat-mini">
-                        <div class="num">🏆</div>
-                        <div class="lbl">Host</div>
-                    </div>
+                    <div class="gamer-stat-mini"><div class="num">6</div><div class="lbl">Games</div></div>
+                    <div class="gamer-stat-mini"><div class="num">∞</div><div class="lbl">Hours Played</div></div>
+                    <div class="gamer-stat-mini"><div class="num">🏆</div><div class="lbl">Host</div></div>
                 </div>
             </div>
 
-            <!-- Games Grid -->
             <div class="games-grid">
-
-                <!-- Free Fire -->
                 <div class="game-card active-game reveal">
                     <div class="game-banner banner-ff">🔥</div>
                     <div class="game-info">
                         <div class="game-name">Free Fire</div>
                         <div class="game-platform">📱 Mobile · Battle Royale</div>
-                        <span class="game-status status-active">
-                            <span class="status-dot"></span>
-                            Currently Playing
-                        </span>
+                        <span class="game-status status-active"><span class="status-dot"></span>Currently Playing</span>
                         <p class="game-desc">My OG battle royale. Squad up, land hot, clutch the booyah. If you know, you know.</p>
                     </div>
                 </div>
 
-                <!-- Geometry Dash -->
                 <div class="game-card active-game reveal">
                     <div class="game-banner banner-gd">⬡</div>
                     <div class="game-info">
                         <div class="game-name">Geometry Dash</div>
                         <div class="game-platform">📱💻 Mobile & PC · Rhythm Platformer</div>
-                        <span class="game-status status-active">
-                            <span class="status-dot"></span>
-                            Currently Playing
-                        </span>
+                        <span class="game-status status-active"><span class="status-dot"></span>Currently Playing</span>
                         <p class="game-desc">The game that tests patience and reflexes. Every failed jump makes you stronger — or angrier.</p>
                     </div>
                 </div>
 
-                <!-- CODM -->
                 <div class="game-card active-game reveal">
                     <div class="game-banner banner-codm">🪖</div>
                     <div class="game-info">
                         <div class="game-name">Call of Duty Mobile</div>
                         <div class="game-platform">📱 Mobile · FPS · Battle Royale</div>
-                        <span class="game-status status-active">
-                            <span class="status-dot"></span>
-                            On Break, back soon
-                        </span>
+                        <span class="game-status status-active"><span class="status-dot"></span>On Break, back soon</span>
                         <p class="game-desc">Ranked grind, BR, multiplayer — CODM does it all. Tactical shooter at its finest on mobile.</p>
                     </div>
                 </div>
 
-                <!-- BloodStrike -->
                 <div class="game-card active-game reveal">
                     <div class="game-banner banner-bs">🩸</div>
                     <div class="game-info">
                         <div class="game-name">BloodStrike</div>
                         <div class="game-platform">📱 Mobile · Battle Royale · FPS</div>
-                        <span class="game-status status-active">
-                            <span class="status-dot"></span>
-                            On Break, back soon
-                        </span>
+                        <span class="game-status status-active"><span class="status-dot"></span>On Break, back soon</span>
                         <p class="game-desc">Fast-paced combat with unique abilities. The dark horse of mobile shooters — underrated, lethal.</p>
                     </div>
                 </div>
 
-                <!-- eFootball -->
                 <div class="game-card active-game reveal">
                     <div class="game-banner banner-ef">⚽</div>
                     <div class="game-info">
                         <div class="game-name">eFootball</div>
                         <div class="game-platform">📱💻 Mobile & PC · Sports Simulation</div>
-                        <span class="game-status status-active">
-                            <span class="status-dot"></span>
-                            On Break, back soon
-                        </span>
+                        <span class="game-status status-active"><span class="status-dot"></span>On Break, back soon</span>
                         <p class="game-desc">The beautiful game, digital edition. Building the dream squad, one match at a time.</p>
                     </div>
                 </div>
 
-                <!-- Fortnite (Coming Soon) -->
                 <div class="game-card coming-soon reveal">
                     <div class="game-banner banner-fn">🌪️</div>
                     <div class="game-info">
                         <div class="game-name">Fortnite</div>
                         <div class="game-platform">💻🎮 PC / Console · Battle Royale</div>
-                        <span class="game-status status-soon">
-                            <span class="status-dot"></span>
-                            Coming Soon
-                        </span>
+                        <span class="game-status status-soon"><span class="status-dot"></span>Coming Soon</span>
                         <p class="game-desc">It's time to enter the loop. Fortnite is on the list — next chapter drops when the setup is ready.</p>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Tournament Hosting Banner -->
             <div class="tournament-banner reveal">
-                <div class="tournament-status-pill">
-                    <span class="live-dot"></span>
-                    TOURNAMENT HUB
-                </div>
-
+                <div class="tournament-status-pill"><span class="live-dot"></span>TOURNAMENT HUB</div>
                 <h3>🏆 KingzAlkhassim Tournaments</h3>
                 <p>Think you've got what it takes? When I host a tournament, you'll get notified right here. Sign up now to get your spot secured before registration fills up.</p>
-
                 <div class="tournament-meta">
-                    <div class="t-meta-item">
-                        <div class="t-meta-icon">🎮</div>
-                        <div class="t-meta-val">FF · CODM · GD</div>
-                        <div class="t-meta-key">Supported Games</div>
-                    </div>
-                    <div class="t-meta-item">
-                        <div class="t-meta-icon">👥</div>
-                        <div class="t-meta-val">Closed 🔐</div>
-                        <div class="t-meta-key">Registration</div>
-                    </div>
-                    <div class="t-meta-item">
-                        <div class="t-meta-icon">📢</div>
-                        <div class="t-meta-val">24h Notice</div>
-                        <div class="t-meta-key">No outgoing events</div>
-                    </div>
-                    <div class="t-meta-item">
-                        <div class="t-meta-icon">🏅</div>
-                        <div class="t-meta-val">Prize Pools</div>
-                        <div class="t-meta-key">No outgoing events</div>
-                    </div>
+                    <div class="t-meta-item"><div class="t-meta-icon">🎮</div><div class="t-meta-val">FF · CODM · GD</div><div class="t-meta-key">Supported Games</div></div>
+                    <div class="t-meta-item"><div class="t-meta-icon">👥</div><div class="t-meta-val">Closed 🔐</div><div class="t-meta-key">Registration</div></div>
+                    <div class="t-meta-item"><div class="t-meta-icon">📢</div><div class="t-meta-val">24h Notice</div><div class="t-meta-key">No outgoing events</div></div>
+                    <div class="t-meta-item"><div class="t-meta-icon">🏅</div><div class="t-meta-val">Prize Pools</div><div class="t-meta-key">No outgoing events</div></div>
                 </div>
-
-                <button class="btn-tournament" id="openTournamentModal">
-                    🎯 Sign Up for the Tournament
-                </button>
+                <button class="btn-tournament" id="openTournamentModal">🎯 Sign Up for the Tournament</button>
             </div>
-
         </section>
     </div>
 
-    <!-- ════════════════════════════════════════
-         TOURNAMENT REGISTRATION MODAL
-    ════════════════════════════════════════ -->
+    <!-- Tournament Modal -->
     <div class="modal-overlay" id="tournamentModal">
         <div class="modal">
             <button class="modal-close" id="closeModal">✕</button>
-
             <div class="modal-header">
                 <div class="modal-icon">🏆</div>
                 <h3>Tournament Sign-Up</h3>
                 <p>Lock in your spot. You'll be notified when the next tournament goes live.</p>
             </div>
-
-            <!-- Form -->
             <div id="modalFormWrap">
                 <form class="modal-form" id="tournamentForm">
-    <input type="hidden" name="access_key" value="abe925c4-62d9-4db6-9bb8-682c103628f9">
-
-    <input type="hidden" name="subject" value="New Tournament Registration">
-    <input type="hidden" name="from_name" value="KingzAlkhassim Gaming">
-
-    <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-
-    <div>
-        <label for="t_name">In-Game Name</label>
-        <input type="text" id="t_name" name="ign" placeholder="Your IGN / Gamertag" required>
-    </div>
-    <div>
-        <label for="t_uid">Game UID</label>
-        <input type="text" id="t_uid" name="uid" placeholder="e.g. 123456789" required style="font-family:'Space Mono',monospace; letter-spacing:0.05em;">
-    </div>
-    <div>
-        <label for="t_email">Email Address</label>
-        <input type="email" id="t_email" name="email" placeholder="you@example.com" required>
-    </div>
-    <div>
-        <label for="t_game">Preferred Game</label>
-        <select id="t_game" name="game" required>
-            <option value="">Choose a game...</option>
-            <option value="freefire">🔥 Free Fire</option>
-            <option value="gd">⬡ Geometry Dash</option>
-            <option value="codm">🪖 Call of Duty Mobile</option>
-            <option value="bloodstrike">🩸 BloodStrike</option>
-            <option value="efootball">⚽ eFootball</option>
-            <option value="any">🎮 Any / Surprise Me</option>
-        </select>
-    </div>
-    <div>
-        <label for="t_device">Device / Platform</label>
-        <select id="t_device" name="device" required>
-            <option value="">Select platform...</option>
-            <option value="android">📱 Android</option>
-            <option value="ios">📱 iOS</option>
-            <option value="pc">💻 PC</option>
-            <option value="console">🎮 Console</option>
-        </select>
-    </div>
-    <div>
-        <label for="t_skill">Skill Level</label>
-        <select id="t_skill" name="skill">
-            <option value="">Be honest...</option>
-            <option value="rookie">🐣 Rookie</option>
-            <option value="mid">⚔️ Mid</option>
-            <option value="sweaty">💀 Sweaty</option>
-            <option value="pro">👑 Pro</option>
-        </select>
-    </div>
-    <button type="submit" class="modal-submit">🎯 Lock In My Spot</button>
-</form>
-
+                    <input type="hidden" name="access_key" value="abe925c4-62d9-4db6-9bb8-682c103628f9">
+                    <input type="hidden" name="subject" value="New Tournament Registration">
+                    <input type="hidden" name="from_name" value="KingzAlkhassim Gaming">
+                    <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                    <div>
+                        <label for="t_name">In-Game Name</label>
+                        <input type="text" id="t_name" name="ign" placeholder="Your IGN / Gamertag" required>
+                    </div>
+                    <div>
+                        <label for="t_uid">Game UID</label>
+                        <input type="text" id="t_uid" name="uid" placeholder="e.g. 123456789" required style="font-family:'Space Mono',monospace; letter-spacing:0.05em;">
+                    </div>
+                    <div>
+                        <label for="t_email">Email Address</label>
+                        <input type="email" id="t_email" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <div>
+                        <label for="t_game">Preferred Game</label>
+                        <select id="t_game" name="game" required>
+                            <option value="">Choose a game...</option>
+                            <option value="freefire">🔥 Free Fire</option>
+                            <option value="gd">⬡ Geometry Dash</option>
+                            <option value="codm">🪖 Call of Duty Mobile</option>
+                            <option value="bloodstrike">🩸 BloodStrike</option>
+                            <option value="efootball">⚽ eFootball</option>
+                            <option value="any">🎮 Any / Surprise Me</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="t_device">Device / Platform</label>
+                        <select id="t_device" name="device" required>
+                            <option value="">Select platform...</option>
+                            <option value="android">📱 Android</option>
+                            <option value="ios">📱 iOS</option>
+                            <option value="pc">💻 PC</option>
+                            <option value="console">🎮 Console</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="t_skill">Skill Level</label>
+                        <select id="t_skill" name="skill">
+                            <option value="">Be honest...</option>
+                            <option value="rookie">🐣 Rookie</option>
+                            <option value="mid">⚔️ Mid</option>
+                            <option value="sweaty">💀 Sweaty</option>
+                            <option value="pro">👑 Pro</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="modal-submit">🎯 Lock In My Spot</button>
+                </form>
             </div>
-
-            <!-- Success State -->
             <div class="modal-success" id="modalSuccess">
                 <div class="check">✅</div>
                 <h4>You're on the list!</h4>
                 <p>Your spot is reserved. You'll get an email notification 24 hours before the next tournament drops. Stay ready — stay sharp.</p>
             </div>
-
         </div>
     </div>
 
@@ -562,54 +573,44 @@
 
         <div class="contact-container reveal">
             <form class="contact-form" id="contactForm">
-    <input type="hidden" name="access_key" value="abe925c4-62d9-4db6-9bb8-682c103628f9">
-    
-    <input type="hidden" name="subject" value="New Website Project Inquiry">
-    <input type="hidden" name="from_name" value="KingzAlkhassim Portfolio">
+                <input type="hidden" name="access_key" value="abe925c4-62d9-4db6-9bb8-682c103628f9">
+                <input type="hidden" name="subject" value="New Website Project Inquiry">
+                <input type="hidden" name="from_name" value="KingzAlkhassim Portfolio">
+                <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="service">Service Interested In</label>
+                    <select id="service" name="service" required>
+                        <option value="">Select a service...</option>
+                        <option value="audit">Speed & Security Audit ($150-$250)</option>
+                        <option value="website">Professional Website ($2,400+)</option>
+                        <option value="ecommerce">E-commerce Solution ($3,600+)</option>
+                        <option value="branding">Branding & Identity ($1,200+)</option>
+                        <option value="seo">SEO Optimization ($1,450+)</option>
+                        <option value="database">Database & Backend Work ($300+/hr)</option>
+                        <option value="other">Other / Consultation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Tell Me About Your Project</label>
+                    <textarea id="message" name="message" required placeholder="What challenges are you facing?"></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Send Message</button>
+            </form>
 
-    <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-
-    <div class="form-group">
-        <label for="name">Your Name</label>
-        <input type="text" id="name" name="name" required>
-    </div>
-
-    <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" required>
-    </div>
-
-    <div class="form-group">
-        <label for="service">Service Interested In</label>
-        <select id="service" name="service" required>
-            <option value="">Select a service...</option>
-            <option value="audit">Speed & Security Audit ($150-$250)</option>
-            <option value="website">Professional Website ($2,400+)</option>
-            <option value="ecommerce">E-commerce Solution ($3,600+)</option>
-            <option value="branding">Branding & Identity ($1,200+)</option>
-            <option value="seo">SEO Optimization ($1,450+)</option>
-            <option value="database">Database & Backend Work ($300+/hr)</option>
-            <option value="other">Other / Consultation</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="message">Tell Me About Your Project</label>
-        <textarea id="message" name="message" required placeholder="What challenges are you facing?"></textarea>
-    </div>
-
-    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Send Message</button>
-</form>
-
-
-            <div class="trust-badge">
-                ✓ No-Obligation Consultation • Fast Response • Professional Service
-            </div>
+            <div class="trust-badge">✓ No-Obligation Consultation • Fast Response • Professional Service</div>
 
             <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
                 <p style="color: var(--text-secondary); margin-bottom: 1rem;"><strong>Prefer to email or call?</strong></p>
                 <p style="color: var(--accent-cyan); font-size: 1.1rem; font-weight: 600;">
-                    📧 <a href="kingzdongd@gmail.com" class="__cf_email__" data-cfemail="5b3032353c213f34353c3f1b3c363a323775383436">[email&#160;protected]</a><br>
+                    📧 <a href="mailto:kingzdongd@gmail.com" style="color:inherit;">kingzdongd@gmail.com</a><br>
                     📱 +234(0)8032775925
                 </p>
             </div>
@@ -621,34 +622,23 @@
         <div class="footer-container">
             <div class="footer-section">
                 <h3>KingzAlkhassim</h3>
-                <p style="color: var(--text-secondary); line-height: 1.7;">
-                    Professional web developer delivering high-performance solutions for ambitious businesses. Based in Nigeria, serving clients worldwide.
-                </p>
+                <p style="color: var(--text-secondary); line-height: 1.7;">Professional web developer delivering high-performance solutions for ambitious businesses. Based in Nigeria, serving clients worldwide.</p>
                 <div class="social-links">
-                    <!-- Instagram -->
                     <a href="https://instagram.com/real_kingzalkhasim" target="_blank" rel="noopener" class="social-link sl-instagram" title="Instagram">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </a>
-
-<a href="https://x.com/kingzalkhasim" target="_blank" rel="noopener" class="social-link sl-x" title="X (Twitter)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153zM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644z"/>
-    </svg>
-</a>
-
-                    <!-- Discord -->
+                    <a href="https://x.com/kingzalkhasim" target="_blank" rel="noopener" class="social-link sl-x" title="X (Twitter)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153zM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644z"/></svg>
+                    </a>
                     <a href="https://discord.gg/aBCGrUBfwQ" target="_blank" rel="noopener" class="social-link sl-discord" title="Discord">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.09.12 18.12.14 18.14a19.904 19.904 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
                     </a>
-                    <!-- GitHub -->
                     <a href="https://github.com/KingzAlkhasim" target="_blank" rel="noopener" class="social-link sl-github" title="GitHub">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                     </a>
-                    <!-- TikTok -->
                     <a href="https://tiktok.com/@kingzalkhasim_" target="_blank" rel="noopener" class="social-link sl-tiktok" title="TikTok">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
                     </a>
-                    <!-- YouTube -->
                     <a href="https://youtube.com/@kingzalkhassim?si=0Wk368uhnpjyXQBD" target="_blank" rel="noopener" class="social-link sl-youtube" title="YouTube">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                     </a>
@@ -680,7 +670,7 @@
             <div class="footer-section">
                 <h3>Contact Info</h3>
                 <ul>
-                    <li><a href="kingzdongd@gmail.com"><span class="__cf_email__" data-cfemail="2a4143444d504e45444d4e6a4d474b434604494547">[email&#160;protected]</span></a></li>
+                    <li><a href="mailto:kingzdongd@gmail.com">kingzdongd@gmail.com</a></li>
                     <li><a href="tel:+2348032775925">+234(0)8032775925</a></li>
                     <li style="color: var(--text-secondary);">Kaduna, Nigeria</li>
                 </ul>
@@ -692,9 +682,71 @@
         </div>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/script.js"></script>
+    <!-- ═══════════════════════════════════════
+         WHATSAPP FLOATING CHAT BUTTON
+         Bottom-left corner — tapping opens your WhatsApp
+    ═══════════════════════════════════════ -->
+    <div class="whatsapp-float" id="waFloat">
+        <!-- Chat bubble (shows on hover/auto) -->
+        <div class="wa-bubble" id="waBubble">
+            <div class="wa-bubble-title">👋 Hey there!</div>
+            <div class="wa-bubble-text">Need help or have a project in mind? Chat with me on WhatsApp — I reply fast!</div>
+        </div>
 
+        <!-- 
+            WhatsApp button — replace the phone number below with yours.
+            Format: https://wa.me/COUNTRYCODE+NUMBER (no spaces/+/hyphens)
+            Your number +234(0)8032775925 → https://wa.me/2348032775925
+        -->
+        <a
+            href="https://wa.me/2348032775925?text=Hi%20KingzAlkhassim!%20I%20visited%20your%20portfolio%20and%20I%27d%20love%20to%20discuss%20a%20project%20with%20you%20%F0%9F%9A%80"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="wa-btn"
+            id="waBtn"
+            title="Chat on WhatsApp"
+            aria-label="Chat with KingzAlkhassim on WhatsApp"
+        >
+            <div class="wa-online"></div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+        </a>
+    </div>
 
+    <script src="js/script.js"></script>
+    <script>
+        // WhatsApp bubble auto-show + hover interaction
+        const waBubble = document.getElementById('waBubble');
+        const waBtn    = document.getElementById('waBtn');
+        const waFloat  = document.getElementById('waFloat');
+
+        // Auto-show the bubble after 4 seconds, then hide after 8s
+        setTimeout(() => {
+            waBubble.classList.add('visible');
+            setTimeout(() => {
+                if (!waFloat.matches(':hover')) {
+                    waBubble.classList.remove('visible');
+                }
+            }, 8000);
+        }, 4000);
+
+        // Show on hover
+        waFloat.addEventListener('mouseenter', () => waBubble.classList.add('visible'));
+        waFloat.addEventListener('mouseleave', () => waBubble.classList.remove('visible'));
+
+        // Toggle on mobile tap
+        waBtn.addEventListener('click', (e) => {
+            // On mobile (no hover), toggle bubble; let link open normally
+            if (window.innerWidth <= 768) {
+                if (!waBubble.classList.contains('visible')) {
+                    e.preventDefault();
+                    waBubble.classList.add('visible');
+                    setTimeout(() => waBubble.classList.remove('visible'), 4000);
+                }
+                // Second tap lets the link through naturally
+            }
+        });
+    </script>
 </body>
 </html>
