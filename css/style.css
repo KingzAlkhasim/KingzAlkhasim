@@ -2539,3 +2539,207 @@
             .stream-stats { grid-template-columns: repeat(3, 1fr); }
             .stream-subscribe-btn, .stream-channel-btn { font-size: 0.82rem; }
         }
+
+        /* ═══════════════════════════════════════════════════════
+           LOW DETAILS MODE (LDM)
+        ═══════════════════════════════════════════════════════ */
+
+        /* ── LDM Toggle Button ── */
+        .ldm-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50px;
+            padding: 0.38rem 0.75rem 0.38rem 0.6rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+        .ldm-toggle:hover {
+            border-color: rgba(234,179,8,0.4);
+            background: rgba(234,179,8,0.06);
+            color: #fbbf24;
+        }
+        .ldm-toggle.ldm-on {
+            border-color: rgba(234,179,8,0.6);
+            background: rgba(234,179,8,0.1);
+            color: #fbbf24;
+            box-shadow: 0 0 14px rgba(234,179,8,0.2);
+        }
+        .ldm-icon  { font-size: 0.85rem; }
+        .ldm-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; }
+
+        /* Mini switch inside button */
+        .ldm-switch {
+            width: 28px; height: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            position: relative;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .ldm-knob {
+            position: absolute;
+            top: 1px; left: 1px;
+            width: 11px; height: 11px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .ldm-on .ldm-switch {
+            background: rgba(234,179,8,0.3);
+            border-color: rgba(234,179,8,0.4);
+        }
+        .ldm-on .ldm-knob {
+            left: 14px;
+            background: #fbbf24;
+            box-shadow: 0 0 6px rgba(234,179,8,0.6);
+        }
+
+        /* Hide LDM button on mobile nav (show in hamburger area instead) */
+        @media (max-width: 968px) {
+            .ldm-toggle {
+                position: fixed;
+                bottom: 88px;
+                right: 28px;
+                z-index: 9998;
+                background: rgba(10,10,20,0.92);
+                border-color: rgba(255,255,255,0.15);
+                backdrop-filter: blur(12px);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+                padding: 0.5rem 0.9rem 0.5rem 0.75rem;
+            }
+            .ldm-label { font-size: 0.75rem; }
+        }
+        @media (max-width: 600px) {
+            .ldm-toggle { right: 16px; bottom: 84px; }
+        }
+
+        /* ── Toast animation ── */
+        @keyframes toastIn  { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes toastOut { from { opacity:1; transform:translateY(0);    } to { opacity:0; transform:translateY(10px); } }
+
+        /* ════════════════════════════════════════════════════════
+           LDM ACTIVE — what gets turned off on :root.ldm
+           Everything here only applies when LDM is ON.
+           The decorations still EXIST, they're just paused/simplified.
+        ════════════════════════════════════════════════════════ */
+
+        /* Stop all background animations */
+        :root.ldm body::before,
+        :root.ldm body::after              { animation: none !important; }
+
+        /* Kill floating orbs */
+        :root.ldm .deco-orb               { display: none !important; }
+
+        /* Kill grid overlay (subtle but saves repaints) */
+        :root.ldm .grid-overlay           { display: none !important; }
+
+        /* Kill noise texture */
+        :root.ldm .noise-overlay          { display: none !important; }
+
+        /* Stop background pulse */
+        :root.ldm #gaming-wrapper::before { animation: none !important; }
+        :root.ldm #live-wrapper           { background: var(--bg-primary) !important; }
+
+        /* Stop all card hover transforms (still hover-able, just no movement) */
+        :root.ldm .service-card:hover,
+        :root.ldm .project-card:hover,
+        :root.ldm .game-card:hover,
+        :root.ldm .tech-item:hover        { transform: none !important; }
+
+        /* Kill glow box-shadows */
+        :root.ldm .service-card:hover,
+        :root.ldm .tech-item:hover        { box-shadow: none !important; }
+
+        /* Stop TV/tablet glow animations */
+        :root.ldm .tv-frame::after,
+        :root.ldm .tablet-frame::after    { animation: none !important; opacity: 0.2 !important; }
+
+        /* Stop hero floating orb */
+        :root.ldm .hero::after            { animation: none !important; }
+
+        /* Stop gamer avatar float */
+        :root.ldm .gamer-avatar           { animation: none !important; }
+
+        /* Stop gamer profile border rotate */
+        :root.ldm .gamer-profile::before  { animation: none !important; }
+
+        /* Stop floating card ring */
+        :root.ldm .floating-card::before  { animation: none !important; }
+
+        /* Stop live frame pulse */
+        :root.ldm .live-frame             { animation: none !important; }
+
+        /* Stop live badge ripples */
+        :root.ldm .live-ring              { animation: none !important; }
+        :root.ldm .live-badge-online::after { animation: none !important; }
+
+        /* Stop TV static noise (heavy animation) */
+        :root.ldm .tv-static-lines        { animation: none !important; }
+
+        /* Stop section divider scan line */
+        :root.ldm .section-divider::before { animation: none !important; }
+        :root.ldm .section-divider::after  { animation: none !important; }
+
+        /* Stop logo pulse */
+        :root.ldm .logo                   { animation: none !important; }
+
+        /* Stop nav shimmer */
+        :root.ldm .cta-nav::after         { animation: none !important; }
+
+        /* Stop card ring rotate */
+        :root.ldm .floating-card::before  { animation: none !important; }
+
+        /* Stop contact glow */
+        :root.ldm .contact-container::before { animation: none !important; }
+
+        /* Stop hero code ticker */
+        :root.ldm .hero-code-ticker-inner { animation-play-state: paused !important; }
+
+        /* Stop live title gradient shift */
+        :root.ldm .live-title-gradient    { animation: none !important; background: var(--accent-purple) !important; -webkit-background-clip: text; background-clip: text; }
+
+        /* Stop avatar float on offline screen */
+        :root.ldm .offline-avatar         { animation: none !important; }
+
+        /* Disable backdrop-filter blurs (very expensive on low-end) */
+        :root.ldm nav,
+        :root.ldm .service-card,
+        :root.ldm .project-card,
+        :root.ldm .game-card,
+        :root.ldm .tech-item,
+        :root.ldm .floating-card,
+        :root.ldm .contact-container,
+        :root.ldm .modal,
+        :root.ldm .gamer-profile          { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+
+        /* Simplify backgrounds for blurred cards */
+        :root.ldm .service-card,
+        :root.ldm .project-card,
+        :root.ldm .floating-card,
+        :root.ldm .gamer-profile          { background: rgba(20,20,30,0.95) !important; }
+
+        /* Stop reveal animations mid-page (already triggered ones stay visible) */
+        :root.ldm .reveal                 { transition: none !important; }
+
+        /* Stop status dot blink */
+        :root.ldm .status-dot,
+        :root.ldm .stream-live-dot,
+        :root.ldm .live-dot,
+        :root.ldm .wa-online              { animation: none !important; }
+
+        /* Stop WhatsApp ping rings */
+        :root.ldm .wa-btn::before,
+        :root.ldm .wa-btn::after          { animation: none !important; display: none !important; }
+
+        /* Stop tournament live dot */
+        :root.ldm .live-dot               { animation: none !important; }
+
+        /* LDM button indicator text update */
+        :root.ldm .ldm-label::after       { content: ' ON'; }
