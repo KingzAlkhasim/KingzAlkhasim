@@ -2544,34 +2544,41 @@
            LOW DETAILS MODE (LDM)
         ═══════════════════════════════════════════════════════ */
 
-        /* ── LDM Toggle Button ── */
+        /* ── LDM Toggle Button — always fixed bottom-right ── */
         .ldm-toggle {
+            position: fixed;
+            bottom: 100px;
+            right: 28px;
+            z-index: 9998;
             display: flex;
             align-items: center;
             gap: 0.45rem;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(10,10,20,0.92);
+            border: 1px solid rgba(255,255,255,0.15);
             border-radius: 50px;
-            padding: 0.38rem 0.75rem 0.38rem 0.6rem;
+            padding: 0.5rem 0.9rem 0.5rem 0.75rem;
             cursor: pointer;
             font-family: 'Outfit', sans-serif;
             transition: all 0.3s ease;
             color: var(--text-secondary);
-            flex-shrink: 0;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         .ldm-toggle:hover {
-            border-color: rgba(234,179,8,0.4);
-            background: rgba(234,179,8,0.06);
+            border-color: rgba(234,179,8,0.5);
+            background: rgba(20,18,5,0.95);
             color: #fbbf24;
+            box-shadow: 0 4px 20px rgba(234,179,8,0.2);
         }
         .ldm-toggle.ldm-on {
-            border-color: rgba(234,179,8,0.6);
-            background: rgba(234,179,8,0.1);
+            border-color: rgba(234,179,8,0.7);
+            background: rgba(25,20,5,0.95);
             color: #fbbf24;
-            box-shadow: 0 0 14px rgba(234,179,8,0.2);
+            box-shadow: 0 0 20px rgba(234,179,8,0.3), 0 4px 20px rgba(0,0,0,0.4);
         }
         .ldm-icon  { font-size: 0.85rem; }
-        .ldm-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; }
+        .ldm-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; }
 
         /* Mini switch inside button */
         .ldm-switch {
@@ -2601,23 +2608,8 @@
             box-shadow: 0 0 6px rgba(234,179,8,0.6);
         }
 
-        /* Hide LDM button on mobile nav (show in hamburger area instead) */
-        @media (max-width: 968px) {
-            .ldm-toggle {
-                position: fixed;
-                bottom: 88px;
-                right: 28px;
-                z-index: 9998;
-                background: rgba(10,10,20,0.92);
-                border-color: rgba(255,255,255,0.15);
-                backdrop-filter: blur(12px);
-                box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-                padding: 0.5rem 0.9rem 0.5rem 0.75rem;
-            }
-            .ldm-label { font-size: 0.75rem; }
-        }
         @media (max-width: 600px) {
-            .ldm-toggle { right: 16px; bottom: 84px; }
+            .ldm-toggle { right: 16px; bottom: 96px; }
         }
 
         /* ── Toast animation ── */
