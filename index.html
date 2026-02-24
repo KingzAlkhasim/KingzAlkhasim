@@ -37,6 +37,14 @@
                 <li><a href="#contact">Contact</a></li>
             </ul>
             <a href="#contact" class="cta-nav">Get Free Audit</a>
+
+            <!-- Low Details Mode toggle -->
+            <button class="ldm-toggle" id="ldmToggle" title="Low Details Mode — reduces animations for smoother performance">
+                <span class="ldm-icon">⚡</span>
+                <span class="ldm-label">LDM</span>
+                <span class="ldm-switch"><span class="ldm-knob"></span></span>
+            </button>
+
             <button class="mobile-menu-btn">
                 <span></span><span></span><span></span>
             </button>
@@ -938,7 +946,68 @@
         const STREAM_DESC  = 'Watching KingzAlkhassim build and optimize a real PHP + MySQL project live. Drop your questions in the chat!';
         //
         // =========================================================
-        // ================== DONE — THAT'S IT =====================
+        // =================== LOW DETAILS MODE ====================
+        // =========================================================
+        // Disables heavy animations/effects for low-end devices
+        // User preference is saved — persists across page visits
+        // =========================================================
+
+        const ldmToggle = document.getElementById('ldmToggle');
+        const LDM_KEY   = 'kingz_ldm';
+
+        function applyLDM(enabled) {
+            if (enabled) {
+                document.documentElement.classList.add('ldm');
+                ldmToggle.classList.add('ldm-on');
+                ldmToggle.title = 'Low Details Mode ON — click to disable';
+            } else {
+                document.documentElement.classList.remove('ldm');
+                ldmToggle.classList.remove('ldm-on');
+                ldmToggle.title = 'Low Details Mode — reduces animations for smoother performance';
+            }
+        }
+
+        // Load saved preference
+        applyLDM(localStorage.getItem(LDM_KEY) === 'true');
+
+        // Toggle on click
+        ldmToggle.addEventListener('click', () => {
+            const nowEnabled = !document.documentElement.classList.contains('ldm');
+            localStorage.setItem(LDM_KEY, nowEnabled);
+            applyLDM(nowEnabled);
+
+            // Show brief toast feedback
+            showLDMToast(nowEnabled);
+        });
+
+        function showLDMToast(enabled) {
+            const existing = document.getElementById('ldmToast');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.id = 'ldmToast';
+            toast.innerHTML = enabled
+                ? '⚡ Low Details Mode <strong>ON</strong> — animations reduced'
+                : '✨ Low Details Mode <strong>OFF</strong> — full experience restored';
+            toast.style.cssText = `
+                position:fixed; bottom:90px; right:28px;
+                background:rgba(15,15,25,0.95);
+                border:1px solid ${enabled ? 'rgba(234,179,8,0.5)' : 'rgba(0,240,255,0.4)'};
+                color:${enabled ? '#fbbf24' : 'var(--accent-cyan)'};
+                padding:0.75rem 1.2rem; border-radius:12px;
+                font-size:0.82rem; font-family:'Outfit',sans-serif;
+                box-shadow:0 8px 30px rgba(0,0,0,0.4);
+                z-index:99999; animation:toastIn 0.3s ease;
+                backdrop-filter:blur(10px);
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 2800);
+        }
+
+        // =========================================================
+        // =================== DONE ================================
         // =========================================================
 
         const liveFrame      = document.getElementById('liveFrame');
