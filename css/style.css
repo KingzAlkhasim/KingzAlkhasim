@@ -846,23 +846,6 @@
             box-shadow: 0 0 8px var(--accent-cyan);
         }
 
-        /* Upload hint box */
-        .video-upload-hint {
-            background: rgba(0,240,255,0.05);
-            border: 1px dashed rgba(0,240,255,0.3);
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .video-upload-hint strong {
-            color: var(--accent-cyan);
-            display: block;
-            margin-bottom: 0.3rem;
-        }
-
         /* ═══ CONTACT ═══ */
         .contact-container {
             background: var(--bg-card);
