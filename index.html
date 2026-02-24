@@ -104,7 +104,6 @@
                         ></video>
                         <div class="tv-placeholder">
                             <div class="tv-placeholder-icon">💻</div>
-                            <div class="tv-placeholder-text">Add your coding<br>screen recording here<br><br><code style="font-size:0.7rem;color:rgba(0,240,255,0.5)">videos/coding.mp4</code></div>
                         </div>
                     </div>
                     <div class="tv-brand-dot"></div>
@@ -455,7 +454,6 @@
                                 ></video>
                                 <div class="tv-placeholder" style="border-radius: 10px;">
                                     <div class="tv-placeholder-icon">🎮</div>
-                                    <div class="tv-placeholder-text">Add your gameplay<br>recording here<br><br><code style="font-size:0.7rem;color:rgba(168,85,247,0.6)">videos/gaming.mp4</code></div>
                                 </div>
                             </div>
                             <div class="tablet-home-bar"></div>
@@ -894,10 +892,13 @@
         const waFloat  = document.getElementById('waFloat');
 
         setTimeout(() => {
-            waBubble.classList.add('visible');
-            setTimeout(() => {
-                if (!waFloat.matches(':hover')) waBubble.classList.remove('visible');
-            }, 8000);
+            // Only auto-show bubble on desktop — on mobile it blocks content
+            if (window.innerWidth > 768) {
+                waBubble.classList.add('visible');
+                setTimeout(() => {
+                    if (!waFloat.matches(':hover')) waBubble.classList.remove('visible');
+                }, 8000);
+            }
         }, 4000);
 
         waFloat.addEventListener('mouseenter', () => waBubble.classList.add('visible'));
@@ -988,7 +989,8 @@
                 ? '⚡ Low Details Mode <strong>ON</strong> — animations reduced'
                 : '✨ Low Details Mode <strong>OFF</strong> — full experience restored';
             toast.style.cssText = `
-                position:fixed; bottom:90px; right:28px;
+                position:fixed; bottom:90px; left:50%;
+                transform:translateX(-50%);
                 background:rgba(15,15,25,0.95);
                 border:1px solid ${enabled ? 'rgba(234,179,8,0.5)' : 'rgba(0,240,255,0.4)'};
                 color:${enabled ? '#fbbf24' : 'var(--accent-cyan)'};
@@ -997,6 +999,7 @@
                 box-shadow:0 8px 30px rgba(0,0,0,0.4);
                 z-index:99999; animation:toastIn 0.3s ease;
                 backdrop-filter:blur(10px);
+                white-space:nowrap;
             `;
             document.body.appendChild(toast);
             setTimeout(() => {
