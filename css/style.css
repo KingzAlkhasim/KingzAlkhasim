@@ -14,13 +14,19 @@
             --shadow-glow-purple: 0 0 30px rgba(168, 85, 247, 0.3);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; max-width: 100%; }
+
+        html {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
 
         body {
             font-family: 'Outfit', -apple-system, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             overflow-x: hidden;
+            max-width: 100vw;
             line-height: 1.6;
         }
 
@@ -2544,11 +2550,11 @@
            LOW DETAILS MODE (LDM)
         ═══════════════════════════════════════════════════════ */
 
-        /* ── LDM Toggle Button — always fixed bottom-right ── */
+        /* ── LDM Toggle Button — fixed bottom-LEFT, never overlaps WhatsApp ── */
         .ldm-toggle {
             position: fixed;
-            bottom: 100px;
-            right: 28px;
+            bottom: 28px;
+            left: 28px;
             z-index: 9998;
             display: flex;
             align-items: center;
@@ -2609,7 +2615,7 @@
         }
 
         @media (max-width: 600px) {
-            .ldm-toggle { right: 16px; bottom: 96px; }
+            .ldm-toggle { left: 16px; bottom: 28px; }
         }
 
         /* ── Toast animation ── */
