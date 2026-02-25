@@ -20,9 +20,6 @@
     <!-- Grain texture -->
     <div class="noise-overlay"></div>
 
-    <!-- Hero code ticker (animated code scrolling at bottom of hero) -->
-    <!-- inserted dynamically by JS -->
-
     <!-- Navigation -->
     <nav id="navbar">
         <div class="nav-container">
@@ -89,17 +86,12 @@
                 <div class="tv-label">💻 LIVE CODING</div>
                 <div class="tv-frame">
                     <div class="tv-screen">
-                        <!--
-                            REPLACE src WITH YOUR CODING SCREEN RECORDING:
-                            Option A — local file: src="videos/gaming1.mp4"
-                            Option B — hosted URL: src="https://yourdomain.com/coding.mp4"
-                        -->
                         <video
                             autoplay
                             loop
                             muted
                             playsinline
-                            src="videos/gaming1.mp4"
+                            src="videos/coding.mp4"
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                         ></video>
                         <div class="tv-placeholder">
@@ -433,28 +425,57 @@
             <!-- ═══ GAMING VIDEO SHOWCASE — inside gaming section ═══ -->
             <div class="gaming-video-showcase reveal" style="margin-bottom: 4rem;">
                 <div class="video-showcase-grid">
-                    <!-- Tablet Mockup - Gaming Video -->
+
+                    <!-- Tablet Mockup - Gaming Playlist -->
                     <div class="tablet-mockup">
                         <div class="tablet-label">🎮 MY GAMEPLAY</div>
                         <div class="tablet-frame">
                             <div class="tablet-camera"></div>
                             <div class="tablet-screen">
-                                <!--
-                                    REPLACE src WITH YOUR GAMING SCREEN RECORDING:
-                                    Option A — local file: src="videos/gaming1.mp4"
-                                    Option B — hosted URL: src="https://yourdomain.com/gaming.mp4"
-                                -->
+
+                                <!-- ═══ GAMING PLAYLIST VIDEO ═══ -->
                                 <video
-                                    autoplay
-                                    loop
+                                    id="gamingPlaylist"
                                     muted
                                     playsinline
-                                    src="videos/gaming1.mp4"
-                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                    style="width:100%;height:100%;object-fit:cover;display:block;"
                                 ></video>
-                                <div class="tv-placeholder" style="border-radius: 10px;">
+
+                                <!-- Placeholder shown only if ALL videos fail -->
+                                <div class="tv-placeholder" style="border-radius: 10px; display: none;">
                                     <div class="tv-placeholder-icon">🎮</div>
+                                    <div class="tv-placeholder-text">Add your gameplay videos to the videos/ folder</div>
                                 </div>
+
+                                <!-- Game title label overlay -->
+                                <div id="gameLabel" style="
+                                    position: absolute;
+                                    bottom: 10px;
+                                    left: 10px;
+                                    background: rgba(0,0,0,0.75);
+                                    color: white;
+                                    font-size: 0.7rem;
+                                    font-weight: 700;
+                                    padding: 4px 12px;
+                                    border-radius: 20px;
+                                    z-index: 10;
+                                    font-family: 'Outfit', sans-serif;
+                                    backdrop-filter: blur(6px);
+                                    border: 1px solid rgba(255,255,255,0.15);
+                                    transition: opacity 0.4s ease;
+                                    opacity: 0;
+                                "></div>
+
+                                <!-- Progress dots -->
+                                <div id="playlistDots" style="
+                                    position: absolute;
+                                    bottom: 10px;
+                                    right: 10px;
+                                    display: flex;
+                                    gap: 5px;
+                                    z-index: 10;
+                                "></div>
+
                             </div>
                             <div class="tablet-home-bar"></div>
                         </div>
@@ -469,8 +490,27 @@
                             <li>Free Fire squad wins & solo clutches</li>
                             <li>Call of Duty Mobile ranked plays</li>
                             <li>Geometry Dash level completions</li>
-                            <li>Tournament highlight moments</li>
+                            <li>BloodStrike highlight moments</li>
+                            <li>eFootball best goals</li>
                         </ul>
+
+                        <!-- Playlist info badge -->
+                        <div style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 0.6rem;
+                            background: rgba(168,85,247,0.12);
+                            border: 1px solid rgba(168,85,247,0.35);
+                            border-radius: 50px;
+                            padding: 0.5rem 1.2rem;
+                            font-size: 0.82rem;
+                            color: #c084fc;
+                            font-weight: 600;
+                            margin-top: 0.5rem;
+                        ">
+                            <span style="font-size:1rem;">▶</span>
+                            5-Video Playlist · Auto-plays each game
+                        </div>
                     </div>
                 </div>
             </div>
@@ -605,13 +645,6 @@
                         <div class="stream-corner sc-br"></div>
                         <div class="stream-scanline"></div>
                         <div class="stream-live-tag"><span class="stream-live-dot"></span> LIVE</div>
-                        <!--
-                            HOW TO WIRE YOUR YOUTUBE LIVE:
-                            1. Go to studio.youtube.com
-                            2. Click your profile → Settings → Channel → Basic Info
-                            3. Copy your Channel ID (starts with UC...)
-                            4. Replace UCxxxxxxxxxxxxxxxxxxxxxxxxx below with your Channel ID
-                        -->
                         <iframe
                             id="youtubeEmbed"
                             src="https://www.youtube.com/embed/live_stream?channel=UCg4R_1W61ApJfVa-JO5GTEA&autoplay=1&mute=1"
@@ -774,7 +807,7 @@
             <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
                 <p style="color: var(--text-secondary); margin-bottom: 1rem;"><strong>Prefer to email or call?</strong></p>
                 <p style="color: var(--accent-cyan); font-size: 1.1rem; font-weight: 600;">
-                    📧 <a href="/cdn-cgi/l/email-protection#600b090e071a040f0e070420070d01090c4e030f0d" style="color:inherit;"><span class="__cf_email__" data-cfemail="8fe4e6e1e8f5ebe0e1e8ebcfe8e2eee6e3a1ece0e2">[email&#160;protected]</span></a><br>
+                    📧 <a href="mailto:kingzalkhassim@gmail.com" style="color:inherit;">kingzalkhassim@gmail.com</a><br>
                     📱 +234(0)8032775925
                 </p>
             </div>
@@ -834,7 +867,7 @@
             <div class="footer-section">
                 <h3>Contact Info</h3>
                 <ul>
-                    <li><a href="/cdn-cgi/l/email-protection#b1dad8dfd6cbd5dedfd6d5f1d6dcd0d8dd9fd2dedc"><span class="__cf_email__" data-cfemail="53383a3d3429373c3d343713343e323a3f7d303c3e">[email&#160;protected]</span></a></li>
+                    <li><a href="mailto:kingzalkhassim@gmail.com">kingzalkhassim@gmail.com</a></li>
                     <li><a href="tel:+2348032775925">+234(0)8032775925</a></li>
                     <li style="color: var(--text-secondary);">Kaduna, Nigeria</li>
                 </ul>
@@ -846,7 +879,7 @@
         </div>
     </footer>
 
-    <!-- ═══ LOW DETAILS MODE BUTTON — fixed, always visible ═══ -->
+    <!-- ═══ LOW DETAILS MODE BUTTON ═══ -->
     <button class="ldm-toggle" id="ldmToggle" title="Low Details Mode — reduces animations for smoother performance">
         <span class="ldm-icon">⚡</span>
         <span class="ldm-label">LDM</span>
@@ -854,20 +887,11 @@
     </button>
 
     <!-- ═══ WHATSAPP FLOATING CHAT BUTTON ═══ -->
-         Bottom-left corner — tapping opens your WhatsApp
-    ═══════════════════════════════════════ -->
     <div class="whatsapp-float" id="waFloat">
-        <!-- Chat bubble (shows on hover/auto) -->
         <div class="wa-bubble" id="waBubble">
             <div class="wa-bubble-title">👋 Hey there!</div>
             <div class="wa-bubble-text">Need help or have a project in mind? Chat with me on WhatsApp — I reply fast!</div>
         </div>
-
-        <!-- 
-            WhatsApp button — replace the phone number below with yours.
-            Format: https://wa.me/COUNTRYCODE+NUMBER (no spaces/+/hyphens)
-            Your number +234(0)8032775925 → https://wa.me/2348032775925
-        -->
         <a
             href="https://wa.me/2348032775925?text=Hi%20KingzAlkhassim!%20I%20visited%20your%20portfolio%20and%20I%27d%20love%20to%20discuss%20a%20project%20with%20you%20%F0%9F%9A%80"
             target="_blank"
@@ -884,7 +908,7 @@
         </a>
     </div>
 
-        <script src="js/script.js"></script>
+    <script src="js/script.js"></script>
     <script>
         // ═══ WHATSAPP BUBBLE LOGIC ═══
         const waBubble = document.getElementById('waBubble');
@@ -892,7 +916,6 @@
         const waFloat  = document.getElementById('waFloat');
 
         setTimeout(() => {
-            // Only auto-show bubble on desktop — on mobile it blocks content
             if (window.innerWidth > 768) {
                 waBubble.classList.add('visible');
                 setTimeout(() => {
@@ -926,32 +949,17 @@
             sec.appendChild(wm);
         });
 
-        // ═══ LIVE STREAM LOGIC ═══
+        // ═══ LIVE STREAM CONFIG ═══
         // ─────────────────────────────────────────────────
         // To go LIVE:  set IS_LIVE = true, fill in STREAM_MODE
         // To go OFFLINE: set IS_LIVE = false
         // ─────────────────────────────────────────────────
-        // =========================================================
-        // =================== GOING LIVE? ========================
-        // =========================================================
-        //
-        //   STEP 1 — Change false to true when you go live
-        //   STEP 2 — Set mode to 'gaming' or 'coding'
-        //   STEP 3 — Write your stream title
-        //   STEP 4 — Save file and push to GitHub
-        //
-        const IS_LIVE      = false;        // 👈 false = offline  |  true = live
-        const STREAM_MODE  = 'coding';     // 👈 'coding'  or  'gaming'
-        const STREAM_TITLE = 'PHP & MySQL Optimization — Live Build'; // 👈 your title
+        const IS_LIVE      = false;
+        const STREAM_MODE  = 'coding';
+        const STREAM_TITLE = 'PHP & MySQL Optimization — Live Build';
         const STREAM_DESC  = 'Watching KingzAlkhassim build and optimize a real PHP + MySQL project live. Drop your questions in the chat!';
-        //
-        // =========================================================
-        // =================== LOW DETAILS MODE ====================
-        // =========================================================
-        // Disables heavy animations/effects for low-end devices
-        // User preference is saved — persists across page visits
-        // =========================================================
 
+        // ═══ LOW DETAILS MODE ═══
         const ldmToggle = document.getElementById('ldmToggle');
         const LDM_KEY   = 'kingz_ldm';
 
@@ -967,16 +975,12 @@
             }
         }
 
-        // Load saved preference
         applyLDM(localStorage.getItem(LDM_KEY) === 'true');
 
-        // Toggle on click
         ldmToggle.addEventListener('click', () => {
             const nowEnabled = !document.documentElement.classList.contains('ldm');
             localStorage.setItem(LDM_KEY, nowEnabled);
             applyLDM(nowEnabled);
-
-            // Show brief toast feedback
             showLDMToast(nowEnabled);
         });
 
@@ -1008,10 +1012,7 @@
             }, 2800);
         }
 
-        // =========================================================
-        // =================== DONE ================================
-        // =========================================================
-
+        // ═══ LIVE STATE ═══
         const liveFrame      = document.getElementById('liveFrame');
         const offlineFrame   = document.getElementById('offlineFrame');
         const liveBadgeOn    = document.getElementById('liveBadgeOn');
@@ -1046,10 +1047,8 @@
                 if (notifyBox) notifyBox.style.display = 'none';
                 if (latestVids) latestVids.style.display = 'none';
                 setStreamMode(STREAM_MODE);
-                // Animate viewer count mock
                 let viewers = Math.floor(Math.random() * 40) + 5;
                 if (viewerCount) viewerCount.textContent = viewers;
-                // Duration timer
                 let seconds = 0;
                 setInterval(() => {
                     seconds++;
@@ -1059,10 +1058,7 @@
                     if (streamDuration) streamDuration.textContent =
                         (h ? h+'h ' : '') + String(m).padStart(2,'0')+'m '+String(s).padStart(2,'0')+'s';
                 }, 1000);
-                // Nav pulse
-                if (navLiveLink) {
-                    navLiveLink.classList.add('nav-live-active');
-                }
+                if (navLiveLink) navLiveLink.classList.add('nav-live-active');
             } else {
                 liveFrame.style.display    = 'none';
                 offlineFrame.style.display = 'block';
@@ -1133,6 +1129,113 @@
         }
         for (let i = 0; i < 5; i++) spawnOrb();
         setInterval(spawnOrb, 4000);
+
+        // ═══════════════════════════════════════════════
+        // GAMING VIDEO PLAYLIST
+        // ═══════════════════════════════════════════════
+        // Add your short gameplay clips (10–30 seconds each)
+        // to your videos/ folder with these exact filenames:
+        //   videos/gaming-ff.mp4       → Free Fire
+        //   videos/gaming-gd.mp4       → Geometry Dash
+        //   videos/gaming-codm.mp4     → Call of Duty Mobile
+        //   videos/gaming-bs.mp4       → BloodStrike
+        //   videos/gaming-ef.mp4       → eFootball
+        // ═══════════════════════════════════════════════
+        const gamingVideos = [
+            { src: 'videos/gaming-ff.mp4',   label: '🔥 Free Fire' },
+            { src: 'videos/gaming-gd.mp4',   label: '⬡ Geometry Dash' },
+            { src: 'videos/gaming-codm.mp4', label: '🪖 Call of Duty Mobile' },
+            { src: 'videos/gaming-bs.mp4',   label: '🩸 BloodStrike' },
+            { src: 'videos/gaming-ef.mp4',   label: '⚽ eFootball' },
+        ];
+
+        let currentGame   = 0;
+        let failedCount   = 0;
+        const gamingVid   = document.getElementById('gamingPlaylist');
+        const gameLabel   = document.getElementById('gameLabel');
+        const dotsWrap    = document.getElementById('playlistDots');
+
+        // Build progress dots
+        function buildDots() {
+            dotsWrap.innerHTML = '';
+            gamingVideos.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.style.cssText = `
+                    width: 6px; height: 6px;
+                    border-radius: 50%;
+                    background: ${i === 0 ? 'white' : 'rgba(255,255,255,0.35)'};
+                    transition: background 0.3s ease, transform 0.3s ease;
+                    transform: ${i === 0 ? 'scale(1.4)' : 'scale(1)'};
+                `;
+                dotsWrap.appendChild(dot);
+            });
+        }
+
+        // Update which dot is active
+        function updateDots(index) {
+            const dots = dotsWrap.querySelectorAll('div');
+            dots.forEach((dot, i) => {
+                dot.style.background = i === index ? 'white' : 'rgba(255,255,255,0.35)';
+                dot.style.transform  = i === index ? 'scale(1.4)' : 'scale(1)';
+            });
+        }
+
+        // Load and play a video from the playlist
+        function loadGameVideo(index) {
+            const game = gamingVideos[index];
+
+            // Fade out label
+            gameLabel.style.opacity = '0';
+
+            gamingVid.src = game.src;
+            gamingVid.load();
+
+            const playPromise = gamingVid.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // Autoplay blocked — show a tap-to-play hint
+                    gameLabel.textContent = '▶ Tap to play';
+                    gameLabel.style.opacity = '1';
+                    gamingVid.addEventListener('click', () => gamingVid.play(), { once: true });
+                });
+            }
+
+            // Fade in label after short delay
+            setTimeout(() => {
+                gameLabel.textContent = game.label;
+                gameLabel.style.opacity = '1';
+            }, 400);
+
+            updateDots(index);
+        }
+
+        // When one video ends, move to next
+        gamingVid.addEventListener('ended', () => {
+            currentGame = (currentGame + 1) % gamingVideos.length;
+            failedCount = 0; // reset fail counter on successful play
+            loadGameVideo(currentGame);
+        });
+
+        // If a video fails to load, skip to next
+        gamingVid.addEventListener('error', () => {
+            failedCount++;
+            if (failedCount >= gamingVideos.length) {
+                // All videos failed — show placeholder
+                gamingVid.style.display = 'none';
+                const placeholder = gamingVid.nextElementSibling;
+                if (placeholder) placeholder.style.display = 'flex';
+                dotsWrap.style.display = 'none';
+                gameLabel.style.display = 'none';
+                return;
+            }
+            currentGame = (currentGame + 1) % gamingVideos.length;
+            loadGameVideo(currentGame);
+        });
+
+        // Kick off playlist
+        buildDots();
+        loadGameVideo(0);
+
     </script>
 </body>
 </html>
