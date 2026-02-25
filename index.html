@@ -12,6 +12,48 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+
+    <!--
+    ═══════════════════════════════════════════════════════════
+    LITE MODE — runs BEFORE body paints to avoid flash of
+    heavy animations on low-end / reduced-motion devices.
+    Must stay in <head> as a blocking script.
+    ═══════════════════════════════════════════════════════════
+    -->
+    <script>
+    (function() {
+        var LITE_KEY = 'kingz_lite';
+        var stored   = localStorage.getItem(LITE_KEY);
+
+        // ── Decision logic ──────────────────────────────────
+        // Priority order:
+        //   1. User has explicitly saved a preference → honour it always
+        //   2. No saved preference → auto-detect from device/OS signals
+
+        var shouldEnableLite = false;
+
+        if (stored === 'true') {
+            // User manually turned it ON before — keep it ON
+            shouldEnableLite = true;
+        } else if (stored === 'false') {
+            // User manually turned it OFF before — keep it OFF
+            shouldEnableLite = false;
+        } else {
+            // No saved preference — auto-detect
+            var prefersReduced = window.matchMedia &&
+                                 window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var lowMemory      = navigator.deviceMemory && navigator.deviceMemory <= 4;
+            var lowCores       = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+
+            // Enable Lite Mode if ANY low-end signal detected
+            shouldEnableLite = prefersReduced || lowMemory || lowCores;
+        }
+
+        if (shouldEnableLite) {
+            document.documentElement.classList.add('ldm');
+        }
+    })();
+    </script>
 </head>
 <body>
 
@@ -422,7 +464,7 @@
                 </div>
             </div>
 
-            <!-- ═══ GAMING VIDEO SHOWCASE — inside gaming section ═══ -->
+            <!-- ═══ GAMING VIDEO SHOWCASE ═══ -->
             <div class="gaming-video-showcase reveal" style="margin-bottom: 4rem;">
                 <div class="video-showcase-grid">
 
@@ -433,7 +475,7 @@
                             <div class="tablet-camera"></div>
                             <div class="tablet-screen">
 
-                                <!-- ═══ GAMING PLAYLIST VIDEO ═══ -->
+                                <!-- Gaming Playlist Video -->
                                 <video
                                     id="gamingPlaylist"
                                     muted
@@ -613,7 +655,6 @@
                 <p class="section-subtitle">Coding sessions, gaming matches, and everything in between. Watch live or catch the latest upload.</p>
             </div>
 
-            <!-- ── Live Status Badge ── -->
             <div class="live-status-bar reveal">
                 <div class="live-badge-online" id="liveBadgeOn">
                     <span class="live-ring"></span>
@@ -631,13 +672,8 @@
                 </div>
             </div>
 
-            <!-- ── Stream Container ── -->
             <div class="stream-container reveal">
-
-                <!-- LEFT: Player -->
                 <div class="stream-player-wrap">
-
-                    <!-- LIVE frame -->
                     <div class="stream-frame live-frame" id="liveFrame">
                         <div class="stream-corner sc-tl"></div>
                         <div class="stream-corner sc-tr"></div>
@@ -654,8 +690,6 @@
                             allowfullscreen
                         ></iframe>
                     </div>
-
-                    <!-- OFFLINE frame -->
                     <div class="stream-frame offline-frame" id="offlineFrame">
                         <div class="stream-corner sc-tl"></div>
                         <div class="stream-corner sc-tr"></div>
@@ -672,12 +706,9 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- RIGHT: Info panel -->
                 <div class="stream-info-panel">
-
                     <div class="stream-mode-selector">
                         <button class="stream-mode-btn active" id="modeBtnCoding" onclick="setStreamMode('coding')">
                             <span class="mode-icon">💻</span>
@@ -729,11 +760,9 @@
                             Subscribe + hit the bell on YouTube to get notified the moment KingzAlkhassim goes live.
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <!-- ── Latest Videos (shown when offline) ── -->
             <div class="latest-videos-section" id="latestVideosSection">
                 <div class="latest-videos-header">
                     <span class="latest-videos-label">📼 Latest from the Channel</span>
@@ -879,10 +908,16 @@
         </div>
     </footer>
 
-    <!-- ═══ LOW DETAILS MODE BUTTON ═══ -->
-    <button class="ldm-toggle" id="ldmToggle" title="Low Details Mode — reduces animations for smoother performance">
-        <span class="ldm-icon">⚡</span>
-        <span class="ldm-label">LDM</span>
+    <!-- ═══ LITE MODE TOGGLE BUTTON — fixed bottom-left ═══ -->
+    <!--
+        Button shows:
+        • "Lite Mode" label always
+        • Auto-icon: ⚡ when OFF (full), 🍃 when ON (lite)
+        • Tooltip explains what it does
+    -->
+    <button class="ldm-toggle" id="ldmToggle" title="Lite Mode — reduces animations for better performance on low-end devices">
+        <span class="ldm-icon" id="ldmIcon">⚡</span>
+        <span class="ldm-label">Lite Mode</span>
         <span class="ldm-switch"><span class="ldm-knob"></span></span>
     </button>
 
@@ -926,7 +961,6 @@
 
         waFloat.addEventListener('mouseenter', () => waBubble.classList.add('visible'));
         waFloat.addEventListener('mouseleave', () => waBubble.classList.remove('visible'));
-
         waBtn.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
                 if (!waBubble.classList.contains('visible')) {
@@ -949,70 +983,93 @@
             sec.appendChild(wm);
         });
 
-        // ═══ LIVE STREAM CONFIG ═══
-        // ─────────────────────────────────────────────────
-        // To go LIVE:  set IS_LIVE = true, fill in STREAM_MODE
-        // To go OFFLINE: set IS_LIVE = false
-        // ─────────────────────────────────────────────────
-        const IS_LIVE      = false;
-        const STREAM_MODE  = 'coding';
-        const STREAM_TITLE = 'PHP & MySQL Optimization — Live Build';
-        const STREAM_DESC  = 'Watching KingzAlkhassim build and optimize a real PHP + MySQL project live. Drop your questions in the chat!';
+        // ═══════════════════════════════════════════════════════
+        // LITE MODE TOGGLE
+        // ═══════════════════════════════════════════════════════
+        // The auto-detection already ran in <head> (blocking script).
+        // Here we just wire up the toggle button so the user can
+        // manually override — and save their choice to localStorage.
+        // ═══════════════════════════════════════════════════════
 
-        // ═══ LOW DETAILS MODE ═══
-        const ldmToggle = document.getElementById('ldmToggle');
-        const LDM_KEY   = 'kingz_ldm';
+        const LITE_KEY   = 'kingz_lite';
+        const ldmToggle  = document.getElementById('ldmToggle');
+        const ldmIcon    = document.getElementById('ldmIcon');
 
-        function applyLDM(enabled) {
-            if (enabled) {
-                document.documentElement.classList.add('ldm');
-                ldmToggle.classList.add('ldm-on');
-                ldmToggle.title = 'Low Details Mode ON — click to disable';
-            } else {
-                document.documentElement.classList.remove('ldm');
-                ldmToggle.classList.remove('ldm-on');
-                ldmToggle.title = 'Low Details Mode — reduces animations for smoother performance';
-            }
+        // Sync button visual state to current html class
+        function syncLiteBtn() {
+            const isOn = document.documentElement.classList.contains('ldm');
+            ldmToggle.classList.toggle('ldm-on', isOn);
+            ldmIcon.textContent = isOn ? '🍃' : '⚡';
+            ldmToggle.title = isOn
+                ? 'Lite Mode ON — click to restore full experience'
+                : 'Lite Mode — reduces animations for smoother performance';
         }
 
-        applyLDM(localStorage.getItem(LDM_KEY) === 'true');
+        // Apply and save
+        function applyLite(enabled, save = true) {
+            if (enabled) {
+                document.documentElement.classList.add('ldm');
+            } else {
+                document.documentElement.classList.remove('ldm');
+            }
+            if (save) {
+                // Save explicit user choice — overrides auto-detection on next visit
+                localStorage.setItem(LITE_KEY, String(enabled));
+            }
+            syncLiteBtn();
+        }
 
+        // Sync button on page load (class was already set by <head> script)
+        syncLiteBtn();
+
+        // Toggle on click
         ldmToggle.addEventListener('click', () => {
             const nowEnabled = !document.documentElement.classList.contains('ldm');
-            localStorage.setItem(LDM_KEY, nowEnabled);
-            applyLDM(nowEnabled);
-            showLDMToast(nowEnabled);
+            applyLite(nowEnabled, true);
+            showLiteToast(nowEnabled);
         });
 
-        function showLDMToast(enabled) {
-            const existing = document.getElementById('ldmToast');
+        // Toast notification
+        function showLiteToast(enabled) {
+            const existing = document.getElementById('liteToast');
             if (existing) existing.remove();
             const toast = document.createElement('div');
-            toast.id = 'ldmToast';
+            toast.id = 'liteToast';
             toast.innerHTML = enabled
-                ? '⚡ Low Details Mode <strong>ON</strong> — animations reduced'
-                : '✨ Low Details Mode <strong>OFF</strong> — full experience restored';
+                ? '🍃 Lite Mode <strong>ON</strong> — animations reduced for better performance'
+                : '⚡ Lite Mode <strong>OFF</strong> — full visual experience restored';
             toast.style.cssText = `
-                position:fixed; bottom:90px; left:50%;
-                transform:translateX(-50%);
-                background:rgba(15,15,25,0.95);
-                border:1px solid ${enabled ? 'rgba(234,179,8,0.5)' : 'rgba(0,240,255,0.4)'};
-                color:${enabled ? '#fbbf24' : 'var(--accent-cyan)'};
-                padding:0.75rem 1.2rem; border-radius:12px;
-                font-size:0.82rem; font-family:'Outfit',sans-serif;
-                box-shadow:0 8px 30px rgba(0,0,0,0.4);
-                z-index:99999; animation:toastIn 0.3s ease;
-                backdrop-filter:blur(10px);
-                white-space:nowrap;
+                position: fixed;
+                bottom: 90px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(15,15,25,0.97);
+                border: 1px solid ${enabled ? 'rgba(134,239,172,0.5)' : 'rgba(0,240,255,0.4)'};
+                color: ${enabled ? '#86efac' : 'var(--accent-cyan)'};
+                padding: 0.75rem 1.4rem;
+                border-radius: 12px;
+                font-size: 0.82rem;
+                font-family: 'Outfit', sans-serif;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+                z-index: 99999;
+                animation: toastIn 0.3s ease;
+                backdrop-filter: blur(10px);
+                white-space: nowrap;
             `;
             document.body.appendChild(toast);
             setTimeout(() => {
                 toast.style.animation = 'toastOut 0.3s ease forwards';
                 setTimeout(() => toast.remove(), 300);
-            }, 2800);
+            }, 3000);
         }
 
-        // ═══ LIVE STATE ═══
+        // ═══ LIVE STREAM CONFIG ═══
+        // Change IS_LIVE to true when you go live
+        const IS_LIVE      = false;
+        const STREAM_MODE  = 'coding';
+        const STREAM_TITLE = 'PHP & MySQL Optimization — Live Build';
+        const STREAM_DESC  = 'Watching KingzAlkhassim build and optimize a real PHP + MySQL project live. Drop your questions in the chat!';
+
         const liveFrame      = document.getElementById('liveFrame');
         const offlineFrame   = document.getElementById('offlineFrame');
         const liveBadgeOn    = document.getElementById('liveBadgeOn');
@@ -1037,14 +1094,14 @@
 
         function applyLiveState() {
             if (IS_LIVE) {
-                liveFrame.style.display    = 'block';
-                offlineFrame.style.display = 'none';
-                liveBadgeOn.style.display  = 'flex';
-                liveBadgeOff.style.display = 'none';
+                liveFrame.style.display     = 'block';
+                offlineFrame.style.display  = 'none';
+                liveBadgeOn.style.display   = 'flex';
+                liveBadgeOff.style.display  = 'none';
                 liveModePills.style.display = 'flex';
-                streamTitle.textContent    = STREAM_TITLE;
-                streamDesc.textContent     = STREAM_DESC;
-                if (notifyBox) notifyBox.style.display = 'none';
+                streamTitle.textContent     = STREAM_TITLE;
+                streamDesc.textContent      = STREAM_DESC;
+                if (notifyBox)  notifyBox.style.display  = 'none';
                 if (latestVids) latestVids.style.display = 'none';
                 setStreamMode(STREAM_MODE);
                 let viewers = Math.floor(Math.random() * 40) + 5;
@@ -1052,29 +1109,28 @@
                 let seconds = 0;
                 setInterval(() => {
                     seconds++;
-                    const h = Math.floor(seconds/3600);
-                    const m = Math.floor((seconds%3600)/60);
+                    const h = Math.floor(seconds / 3600);
+                    const m = Math.floor((seconds % 3600) / 60);
                     const s = seconds % 60;
                     if (streamDuration) streamDuration.textContent =
-                        (h ? h+'h ' : '') + String(m).padStart(2,'0')+'m '+String(s).padStart(2,'0')+'s';
+                        (h ? h + 'h ' : '') + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's';
                 }, 1000);
                 if (navLiveLink) navLiveLink.classList.add('nav-live-active');
             } else {
-                liveFrame.style.display    = 'none';
-                offlineFrame.style.display = 'block';
-                liveBadgeOn.style.display  = 'none';
-                liveBadgeOff.style.display = 'flex';
+                liveFrame.style.display     = 'none';
+                offlineFrame.style.display  = 'block';
+                liveBadgeOn.style.display   = 'none';
+                liveBadgeOff.style.display  = 'flex';
                 liveModePills.style.display = 'none';
-                streamTitle.textContent    = 'Stream Offline';
-                streamDesc.textContent     = 'KingzAlkhassim is not live right now. Subscribe on YouTube and hit the bell 🔔 to get notified the moment a stream starts.';
-                if (notifyBox) notifyBox.style.display = 'flex';
+                streamTitle.textContent     = 'Stream Offline';
+                streamDesc.textContent      = 'KingzAlkhassim is not live right now. Subscribe on YouTube and hit the bell 🔔 to get notified the moment a stream starts.';
+                if (notifyBox)  notifyBox.style.display  = 'flex';
                 if (latestVids) latestVids.style.display = 'block';
                 if (viewerCount) viewerCount.textContent = '—';
                 if (streamDuration) streamDuration.textContent = '—';
                 if (navLiveLink) navLiveLink.classList.remove('nav-live-active');
             }
         }
-
         applyLiveState();
 
         // ═══ HERO CODE TICKER ═══
@@ -1114,14 +1170,14 @@
             'rgba(168,85,247,0.07)',
         ];
         function spawnOrb() {
-            const orb = document.createElement('div');
-            orb.className = 'deco-orb';
-            const size = 150 + Math.random() * 250;
-            const color = orbColors[Math.floor(Math.random() * orbColors.length)];
-            const startX = Math.random() * 100;
-            const startY = Math.random() * 100;
-            const dx = (Math.random() - 0.5) * 200 + 'px';
-            const dy = (Math.random() - 0.5) * 200 + 'px';
+            const orb      = document.createElement('div');
+            orb.className  = 'deco-orb';
+            const size     = 150 + Math.random() * 250;
+            const color    = orbColors[Math.floor(Math.random() * orbColors.length)];
+            const startX   = Math.random() * 100;
+            const startY   = Math.random() * 100;
+            const dx       = (Math.random() - 0.5) * 200 + 'px';
+            const dy       = (Math.random() - 0.5) * 200 + 'px';
             const duration = 12 + Math.random() * 18;
             orb.style.cssText = `width:${size}px;height:${size}px;background:${color};left:${startX}%;top:${startY}%;--dx:${dx};--dy:${dy};animation-duration:${duration}s;animation-delay:${Math.random()*3}s;`;
             document.body.appendChild(orb);
@@ -1133,13 +1189,13 @@
         // ═══════════════════════════════════════════════
         // GAMING VIDEO PLAYLIST
         // ═══════════════════════════════════════════════
-        // Add your short gameplay clips (10–30 seconds each)
-        // to your videos/ folder with these exact filenames:
-        //   videos/gaming-ff.mp4       → Free Fire
-        //   videos/gaming-gd.mp4       → Geometry Dash
-        //   videos/gaming-codm.mp4     → Call of Duty Mobile
-        //   videos/gaming-bs.mp4       → BloodStrike
-        //   videos/gaming-ef.mp4       → eFootball
+        // Video files needed in your videos/ folder:
+        //   gaming-ff.mp4    → Free Fire
+        //   gaming-gd.mp4    → Geometry Dash
+        //   gaming-codm.mp4  → Call of Duty Mobile
+        //   gaming-bs.mp4    → BloodStrike
+        //   gaming-ef.mp4    → eFootball
+        // Keep each clip 10–30 seconds for best performance.
         // ═══════════════════════════════════════════════
         const gamingVideos = [
             { src: 'videos/gaming-ff.mp4',   label: '🔥 Free Fire' },
@@ -1149,13 +1205,12 @@
             { src: 'videos/gaming-ef.mp4',   label: '⚽ eFootball' },
         ];
 
-        let currentGame   = 0;
-        let failedCount   = 0;
-        const gamingVid   = document.getElementById('gamingPlaylist');
-        const gameLabel   = document.getElementById('gameLabel');
-        const dotsWrap    = document.getElementById('playlistDots');
+        let currentGame = 0;
+        let failedCount = 0;
+        const gamingVid = document.getElementById('gamingPlaylist');
+        const gameLabel = document.getElementById('gameLabel');
+        const dotsWrap  = document.getElementById('playlistDots');
 
-        // Build progress dots
         function buildDots() {
             dotsWrap.innerHTML = '';
             gamingVideos.forEach((_, i) => {
@@ -1171,7 +1226,6 @@
             });
         }
 
-        // Update which dot is active
         function updateDots(index) {
             const dots = dotsWrap.querySelectorAll('div');
             dots.forEach((dot, i) => {
@@ -1180,51 +1234,39 @@
             });
         }
 
-        // Load and play a video from the playlist
         function loadGameVideo(index) {
             const game = gamingVideos[index];
-
-            // Fade out label
             gameLabel.style.opacity = '0';
-
             gamingVid.src = game.src;
             gamingVid.load();
-
             const playPromise = gamingVid.play();
             if (playPromise !== undefined) {
                 playPromise.catch(() => {
-                    // Autoplay blocked — show a tap-to-play hint
                     gameLabel.textContent = '▶ Tap to play';
                     gameLabel.style.opacity = '1';
                     gamingVid.addEventListener('click', () => gamingVid.play(), { once: true });
                 });
             }
-
-            // Fade in label after short delay
             setTimeout(() => {
                 gameLabel.textContent = game.label;
                 gameLabel.style.opacity = '1';
             }, 400);
-
             updateDots(index);
         }
 
-        // When one video ends, move to next
         gamingVid.addEventListener('ended', () => {
             currentGame = (currentGame + 1) % gamingVideos.length;
-            failedCount = 0; // reset fail counter on successful play
+            failedCount = 0;
             loadGameVideo(currentGame);
         });
 
-        // If a video fails to load, skip to next
         gamingVid.addEventListener('error', () => {
             failedCount++;
             if (failedCount >= gamingVideos.length) {
-                // All videos failed — show placeholder
                 gamingVid.style.display = 'none';
                 const placeholder = gamingVid.nextElementSibling;
                 if (placeholder) placeholder.style.display = 'flex';
-                dotsWrap.style.display = 'none';
+                dotsWrap.style.display  = 'none';
                 gameLabel.style.display = 'none';
                 return;
             }
@@ -1232,7 +1274,6 @@
             loadGameVideo(currentGame);
         });
 
-        // Kick off playlist
         buildDots();
         loadGameVideo(0);
 
