@@ -2740,4 +2740,4 @@
         :root.ldm .live-dot               { animation: none !important; }
 
         /* LDM button indicator text update */
-        :root.ldm .ldm-label::after       { content: ' ON'; }
+        :root.ldm .ldm-label::after       { content: ''; }
