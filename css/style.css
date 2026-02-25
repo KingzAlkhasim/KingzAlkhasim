@@ -696,7 +696,7 @@
         /* ── Tablet Mockup ── */
         .tablet-mockup {
             position: relative;
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
         }
