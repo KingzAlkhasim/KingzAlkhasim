@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building a Real-Time AI Chat Interface with JS and Python — KingzAlkhassim</title>
+  <meta name="description" content="A practical step-by-step guide to building a streaming AI chat interface using FastAPI on the backend and vanilla JavaScript on the frontend." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:        #080c10;
+      --bg2:       #0d1218;
+      --bg3:       #121820;
+      --bg4:       #172028;
+      --border:    rgba(6,182,212,.08);
+      --border-hi: rgba(6,182,212,.2);
+
+      --text:      #e4f0f8;
+      --text-2:    #8899aa;
+      --text-3:    #445566;
+
+      --cyan:      #06b6d4;
+      --sky:       #38bdf8;
+      --teal:      #14b8a6;
+      --blue:      #3b82f6;
+      --green:     #22c55e;
+      --purple:    #a855f7;
+
+      --grad:       linear-gradient(135deg, var(--cyan), var(--sky), var(--blue));
+      --grad-warm:  linear-gradient(135deg, var(--teal), var(--cyan));
+      --grad-soft:  linear-gradient(135deg, rgba(6,182,212,.09), rgba(59,130,246,.06));
+
+      --r:          10px;
+      --r-lg:       18px;
+
+      --body:       'Space Grotesk', sans-serif;
+      --display:    'Playfair Display', serif;
+      --mono:       'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Dot grid */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(rgba(6,182,212,.12) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none; z-index: 0; opacity: .6;
+    }
+
+    /* Glow blobs */
+    .blob {
+      position: fixed; border-radius: 50%;
+      pointer-events: none; z-index: 0;
+      filter: blur(100px);
+      animation: swim 20s ease-in-out infinite alternate;
+    }
+    .b1 { width:600px; height:600px; top:-150px; right:-150px;
+          background: radial-gradient(circle, rgba(6,182,212,.07), transparent 65%); }
+    .b2 { width:450px; height:450px; bottom:-80px; left:-100px;
+          background: radial-gradient(circle, rgba(59,130,246,.06), transparent 65%);
+          animation-delay: -10s; }
+    @keyframes swim {
+      from { transform: scale(1) translate(0,0); }
+      to   { transform: scale(1.08) translate(50px,-40px); }
+    }
+
+    /* ─ NAV ─ */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,12,16,.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 880px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      height: 62px;
+      padding: 0 clamp(1.25rem, 4vw, 2rem);
+    }
+    .nav-logo {
+      font-family: var(--body);
+      font-weight: 700; font-size: .95rem;
+      background: var(--grad);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-r { display: flex; align-items: center; gap: .4rem; }
+    .nl {
+      font-size: .8rem; color: var(--text-2);
+      padding: .38rem .8rem; border-radius: 8px;
+      transition: color .2s, background .2s;
+    }
+    .nl:hover { color: var(--text); background: var(--bg3); }
+    .nc {
+      font-size: .78rem; font-weight: 600;
+      padding: .38rem 1rem; border-radius: 8px;
+      background: var(--grad); color: #fff;
+      -webkit-text-fill-color: #fff;
+      transition: opacity .2s, transform .2s;
+    }
+    .nc:hover { opacity: .85; transform: translateY(-1px); }
+    @media(max-width:540px){ .nl{display:none;} }
+
+    /* ─ PROGRESS ─ */
+    #pg {
+      position: fixed; top: 0; left: 0;
+      height: 2px; background: var(--grad);
+      z-index: 200; width: 0;
+      transition: width .08s linear;
+    }
+
+    /* ─ MAIN ─ */
+    main {
+      position: relative; z-index: 1;
+      max-width: 820px; margin: 0 auto;
+      padding: clamp(2.5rem,8vw,5rem) clamp(1.25rem,5vw,2.5rem) 7rem;
+    }
+
+    /* ─ BREADCRUMB ─ */
+    .crumb {
+      font-family: var(--mono); font-size: .72rem;
+      color: var(--text-3); display: flex; gap: .5rem;
+      margin-bottom: 2.5rem;
+      animation: rise .5s ease both;
+    }
+    .crumb a { color: var(--cyan); transition: color .2s; }
+    .crumb a:hover { color: var(--sky); }
+
+    /* ─ HERO ─ */
+    .hero { margin-bottom: 3.5rem; animation: rise .55s ease both; }
+
+    .tag-row {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      margin-bottom: 1.5rem;
+    }
+    .tag {
+      font-family: var(--mono); font-size: .68rem;
+      font-weight: 500; letter-spacing: .09em;
+      text-transform: uppercase; padding: .28rem .8rem;
+      border-radius: 100px;
+    }
+    .tag-live {
+      color: var(--cyan); background: rgba(6,182,212,.1);
+      border: 1px solid rgba(6,182,212,.22);
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cyan); box-shadow: 0 0 6px var(--cyan);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.25;} }
+    .tag-plain {
+      color: var(--text-3); background: var(--bg3);
+      border: 1px solid var(--border);
+    }
+
+    h1 {
+      font-family: var(--display);
+      font-size: clamp(1.75rem, 5vw, 2.9rem);
+      font-weight: 700; line-height: 1.18;
+      letter-spacing: -.01em;
+      margin-bottom: 1.3rem;
+    }
+    h1 em {
+      font-style: italic; color: var(--cyan);
+      -webkit-text-fill-color: var(--cyan);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem; color: var(--text-2);
+      line-height: 1.75; max-width: 620px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-meta {
+      display: flex; flex-wrap: wrap;
+      gap: .5rem 1.4rem; align-items: center;
+      font-family: var(--mono); font-size: .73rem;
+      color: var(--text-3);
+    }
+    .hm-pair { display: flex; align-items: center; gap: .4rem; }
+    .hm-av {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--grad); display: flex;
+      align-items: center; justify-content: center;
+      font-size: .6rem; font-weight: 700; color: #fff;
+    }
+    .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-3); }
+
+    /* ─ DIVIDER ─ */
+    .dv {
+      height: 1px; margin: 2rem 0 3rem;
+      background: linear-gradient(90deg, transparent, var(--cyan) 35%, var(--blue) 65%, transparent);
+      opacity: .25;
+    }
+
+    /* ─ SECTION LABELS ─ */
+    .sl {
+      font-family: var(--mono); font-size: .68rem;
+      font-weight: 600; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--text-3);
+      display: flex; align-items: center; gap: .7rem;
+      margin-bottom: 1.2rem; margin-top: 3.5rem;
+    }
+    .sl::before { content:''; width:24px; height:1px; background:var(--text-3); }
+    .sl::after  { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--text-3),transparent); }
+
+    /* ─ HEADINGS ─ */
+    h2 {
+      font-family: var(--display);
+      font-size: clamp(1.3rem, 3.5vw, 1.85rem);
+      font-weight: 700; letter-spacing: -.01em;
+      color: var(--text); margin-bottom: 1.1rem;
+    }
+    h2 .hl { color: var(--cyan); font-style: italic; }
+
+    h3 {
+      font-family: var(--body);
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text);
+      margin: 2.5rem 0 .6rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .sn {
+      font-family: var(--mono); font-size: .64rem;
+      font-weight: 600; letter-spacing: .08em;
+      background: var(--grad); color: #fff;
+      padding: .23rem .6rem; border-radius: 100px;
+    }
+
+    /* ─ BODY TEXT ─ */
+    p {
+      color: var(--text-2); font-size: .97rem;
+      line-height: 1.85; margin-bottom: 1.1rem;
+    }
+    p strong { color: var(--text); font-weight: 600; }
+    p em { color: var(--cyan); font-style: normal; font-weight: 500; }
+
+    /* ─ INTRO CALLOUT ─ */
+    .intro-box {
+      background: var(--grad-soft);
+      border: 1px solid var(--border-hi);
+      border-radius: var(--r-lg);
+      padding: 1.65rem 2rem; margin: 2rem 0;
+      position: relative; overflow: hidden;
+    }
+    .intro-box::before {
+      content:''; position:absolute;
+      left:0;top:0;width:3px;height:100%;
+      background:var(--grad); border-radius:3px 0 0 3px;
+    }
+    .intro-box p { margin:0; color: var(--text); font-size:1rem; }
+
+    /* ─ INSTALL ─ */
+    .inst {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden; margin: 1.5rem 0 2rem;
+    }
+    .inst-top {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:.5rem 1rem;
+      background:rgba(255,255,255,.025);
+      border-bottom:1px solid var(--border);
+    }
+    .inst-top span { font-family:var(--mono); font-size:.67rem; letter-spacing:.06em; color:var(--text-3); }
+    .cb2 {
+      background:none; border:1px solid var(--border-hi);
+      color:var(--text-2); font-family:var(--mono); font-size:.66rem;
+      padding:.22rem .55rem; border-radius:5px; cursor:pointer; transition:all .2s;
+    }
+    .cb2:hover { border-color:var(--cyan); color:var(--cyan); }
+    .cb2.ok   { border-color:var(--green); color:var(--green); }
+    .inst-body {
+      padding:.95rem 1.2rem; font-family:var(--mono);
+      font-size:.875rem; color:var(--cyan); overflow-x:auto;
+    }
+    .inst-body .pfx { color:var(--text-3); user-select:none; }
+
+    /* ─ CODE BLOCK ─ */
+    .cd {
+      background: #080e14;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden; margin: 1.5rem 0 2rem;
+      transition: border-color .2s;
+    }
+    .cd:hover { border-color: var(--border-hi); }
+    .cd-top {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:.5rem 1rem;
+      background:rgba(255,255,255,.02);
+      border-bottom:1px solid var(--border);
+    }
+    .dots2 { display:flex; gap:5px; }
+    .dots2 span { width:9px; height:9px; border-radius:50%; }
+    .dots2 span:nth-child(1){background:#ff5f57;}
+    .dots2 span:nth-child(2){background:#ffbd2e;}
+    .dots2 span:nth-child(3){background:#28c840;}
+    .lang { font-family:var(--mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); }
+    .cd-body { padding:1.2rem 1.5rem; overflow-x:auto; }
+    .cd-body pre {
+      font-family:var(--mono); font-size:.85rem;
+      line-height:1.78; color:var(--text);
+      white-space:pre; tab-size:4;
+    }
+
+    /* syntax */
+    .kw  { color: #c792ea; }
+    .fn  { color: #82aaff; }
+    .str { color: #c3e88d; }
+    .cm  { color: #455a64; font-style:italic; }
+    .num { color: #f78c6c; }
+    .cls { color: #ffcb6b; }
+    .op  { color: #89ddff; }
+    .pn  { color: #89ddff; }
+    .dec { color: #82aaff; }
+    .prop{ color: #f07178; }
+
+    /* ─ EXPLAIN LIST ─ */
+    .el { list-style:none; display:flex; flex-direction:column; gap:.6rem; margin:.9rem 0 1.5rem; }
+    .el li {
+      display:flex; gap:.8rem;
+      font-size:.9rem; color:var(--text-2); line-height:1.65;
+    }
+    .el li::before { content:'›'; color:var(--cyan); font-size:1rem; flex-shrink:0; margin-top:-.05rem; }
+    .el li strong { color:var(--text); }
+
+    /* ─ TWO COLUMN ─ */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin: 1.75rem 0;
+    }
+    @media(max-width:540px){ .two-col{grid-template-columns:1fr;} }
+    .col-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.1rem 1.25rem;
+    }
+    .col-card-head {
+      font-family: var(--mono); font-size: .72rem;
+      font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--cyan);
+      margin-bottom: .65rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .col-card-head span { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); }
+    .col-card ul { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+    .col-card li { font-size: .83rem; color: var(--text-2); padding-left: .9rem; position: relative; }
+    .col-card li::before { content:'·'; position:absolute; left:0; color:var(--text-3); }
+
+    /* ─ NOTE ─ */
+    .nt {
+      display:flex; gap:.85rem;
+      background: rgba(20,184,166,.07);
+      border:1px solid rgba(20,184,166,.2);
+      border-radius:var(--r);
+      padding:.85rem 1.15rem; margin:1.5rem 0;
+    }
+    .nt-i { font-size:.95rem; flex-shrink:0; margin-top:.1rem; }
+    .nt p { margin:0; font-size:.875rem; color: rgba(153,236,228,.85); }
+
+    /* ─ STEP LINE ─ */
+    .step {
+      padding-left: 1.5rem; position: relative; margin-bottom: .5rem;
+    }
+    .step::before {
+      content:''; position:absolute; left:0; top:.4rem;
+      width:2px; height:calc(100% - .4rem);
+      background: linear-gradient(180deg, var(--cyan), transparent);
+      border-radius:2px;
+    }
+
+    /* ─ ARCHITECTURE DIAGRAM ─ */
+    .arch {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 1.75rem; margin: 2rem 0;
+      font-family: var(--mono); font-size: .82rem;
+    }
+    .arch-title {
+      font-size: .68rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--text-3);
+      margin-bottom: 1.25rem;
+    }
+    .arch-row {
+      display: flex; align-items: center;
+      gap: .75rem; flex-wrap: wrap; margin-bottom: .75rem;
+    }
+    .arch-box {
+      background: var(--bg4);
+      border: 1px solid var(--border-hi);
+      border-radius: 8px; padding: .55rem 1rem;
+      color: var(--text); font-size: .78rem;
+    }
+    .arch-box.cyan { border-color: rgba(6,182,212,.4); color: var(--cyan); }
+    .arch-box.sky  { border-color: rgba(56,189,248,.4); color: var(--sky); }
+    .arch-box.grn  { border-color: rgba(34,197,94,.4); color: var(--green); }
+    .arch-arrow { color: var(--text-3); font-size: 1rem; }
+
+    /* ─ CONCLUSION GRID ─ */
+    .cg {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(215px,1fr));
+      gap: .7rem; margin: 1.5rem 0;
+    }
+    .cg-i {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: .75rem 1rem;
+      font-size: .84rem; color: var(--text-2);
+      display: flex; align-items: center; gap: .55rem;
+      transition: border-color .2s;
+    }
+    .cg-i:hover { border-color: var(--border-hi); }
+    .cg-i::before {
+      content:''; width:5px; height:5px;
+      border-radius:50%; background:var(--grad); flex-shrink:0;
+    }
+
+    /* ─ AUTHOR ─ */
+    .author {
+      margin-top: 5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 2rem;
+      display: flex; gap: 1.5rem; align-items: flex-start;
+      position: relative; overflow: hidden;
+    }
+    .author::before {
+      content:''; position:absolute; inset:0;
+      background: var(--grad-soft); pointer-events:none;
+    }
+    .av {
+      width:60px; height:60px; border-radius:50%;
+      background: var(--grad); flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--body); font-weight:700; font-size:1.1rem;
+      color:#fff; position:relative; z-index:1;
+    }
+    .ai { position:relative; z-index:1; }
+    .an {
+      font-family:var(--body); font-weight:700; font-size:1.05rem;
+      background:var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text; margin-bottom:.2rem;
+    }
+    .ar { font-family:var(--mono); font-size:.73rem; color:var(--text-3); margin-bottom:.65rem; }
+    .ab { font-size:.875rem; color:var(--text-2); line-height:1.65; margin:0; }
+    @media(max-width:500px){ .author{flex-direction:column;} }
+
+    /* ─ FOOTER ─ */
+    footer {
+      position:relative; z-index:1;
+      border-top:1px solid var(--border);
+      padding: 2rem clamp(1.25rem,5vw,4rem);
+    }
+    .fi {
+      max-width:820px; margin:0 auto;
+      display:flex; align-items:center;
+      justify-content:space-between; flex-wrap:wrap; gap:1rem;
+    }
+    .ft { font-family:var(--mono); font-size:.73rem; color:var(--text-3); }
+    .ft a { color:var(--cyan); transition:color .2s; }
+    .ft a:hover { color:var(--sky); }
+    .bk {
+      font-family:var(--mono); font-size:.73rem;
+      color:var(--text-2); display:flex; align-items:center; gap:.4rem;
+      padding:.45rem .9rem; border:1px solid var(--border); border-radius:8px;
+      transition:all .2s;
+    }
+    .bk:hover { border-color:var(--cyan); color:var(--cyan); }
+
+    /* ─ ANIMS ─ */
+    @keyframes rise {
+      from{opacity:0;transform:translateY(15px);}
+      to  {opacity:1;transform:translateY(0);}
+    }
+    main > * { animation: rise .5s ease both; }
+    main > *:nth-child(2){animation-delay:.07s;}
+    main > *:nth-child(3){animation-delay:.13s;}
+    main > *:nth-child(4){animation-delay:.19s;}
+
+    code {
+      font-family:var(--mono); font-size:.84em;
+      background:rgba(6,182,212,.1); color:var(--cyan);
+      padding:.14em .4em; border-radius:5px;
+      border:1px solid rgba(6,182,212,.15);
+    }
+  </style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div id="pg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="https://kingzalkhasim.netlify.app" class="nav-logo">KingzAlkhassim</a>
+    <div class="nav-r">
+      <a href="https://kingzalkhasim.netlify.app/#home" class="nl">Home</a>
+      <a href="https://kingzalkhasim.netlify.app/#projects" class="nl">Projects</a>
+      <a href="https://kingzalkhasim.netlify.app/#about" class="nl">About</a>
+      <a href="https://kingzalkhasim.netlify.app/#contact" class="nc">Hire Me</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <div class="crumb">
+    <a href="https://kingzalkhasim.netlify.app">home</a>
+    <span>/</span><span>articles</span>
+    <span>/</span><span>realtime-ai-chat</span>
+  </div>
+
+  <header class="hero">
+    <div class="tag-row">
+      <span class="tag tag-live"><span class="live-dot"></span>Full-Stack Tutorial</span>
+      <span class="tag tag-plain">JavaScript</span>
+      <span class="tag tag-plain">Python</span>
+      <span class="tag tag-plain">FastAPI</span>
+    </div>
+    <h1>Building a <em>Real-Time</em> AI Chat Interface<br />with JavaScript and Python APIs</h1>
+    <p class="hero-sub">Nobody wants to stare at a spinner for eight seconds. Here's how to build a chat interface that streams AI responses token by token — the same way ChatGPT and K-xpertAI do it.</p>
+    <div class="hero-meta">
+      <div class="hm-pair"><div class="hm-av">KA</div><span>KingzAlkhassim</span></div>
+      <div class="sep"></div>
+      <span>May 2026</span>
+      <div class="sep"></div>
+      <span>⏱ 9 min read</span>
+      <div class="sep"></div>
+      <span>SSE · Streaming · FastAPI</span>
+    </div>
+  </header>
+
+  <div class="dv"></div>
+
+  <!-- INTRO -->
+  <div class="sl">Introduction</div>
+  <h2>Why Is This Topic <span class="hl">Important?</span></h2>
+
+  <p>I remember the first AI chat app I built. You'd type your message, hit enter, and then just wait. The whole response would come back at once after five or six seconds of complete silence. It felt clunky. More than that, it felt like the app was broken even when it wasn't. Users don't actually mind waiting for an answer — what they <em>hate</em> is uncertainty. Not knowing if something is happening.</p>
+
+  <p>Streaming fixes this completely. Instead of buffering the entire response and dumping it on screen all at once, you send each token — each little piece of text — to the browser the moment the model generates it. The user sees the response building word by word, just like someone typing in front of them. Suddenly the same 5-second wait feels fine, because they can already see the beginning of their answer.</p>
+
+  <div class="intro-box">
+    <p>This is exactly how K-xpertAI works under the hood. The frontend opens a connection to the backend, the backend starts generating from the model, and every token gets pushed to the browser as soon as it exists. The whole thing is surprisingly simple once you understand Server-Sent Events — which is what we're building today.</p>
+  </div>
+
+  <p>We're going to build this in two parts: a <strong>Python FastAPI backend</strong> that streams responses using SSE (Server-Sent Events), and a <strong>vanilla JavaScript frontend</strong> that listens to that stream and renders each token as it arrives. No React, no heavy frameworks — just clean fundamentals you can drop into any project.</p>
+
+  <!-- ARCHITECTURE -->
+  <div class="arch">
+    <div class="arch-title">Architecture Overview</div>
+    <div class="arch-row">
+      <div class="arch-box sky">Browser (JS)</div>
+      <span class="arch-arrow">→ POST /chat →</span>
+      <div class="arch-box cyan">FastAPI Server</div>
+      <span class="arch-arrow">→ stream →</span>
+      <div class="arch-box cyan">AI Model / API</div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-box sky">EventSource listener</div>
+      <span class="arch-arrow">← SSE tokens ←</span>
+      <div class="arch-box grn">StreamingResponse</div>
+      <span class="arch-arrow">← token stream ←</span>
+      <div class="arch-box grn">Generate()</div>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div class="sl">The Setup</div>
+  <h2>What Libraries Do You <span class="hl">Need?</span></h2>
+
+  <p>The backend is pure Python. No heavy ML frameworks needed here — we're just building the server layer that sits between the frontend and whatever AI model you're using. If you're pointing this at your own local model, you'll need a couple more packages, but for a clean API-connected backend, this is all you need:</p>
+
+  <div class="inst">
+    <div class="inst-top">
+      <span>TERMINAL — Python (backend)</span>
+      <button class="cb2" onclick="cp(this,'pip install fastapi uvicorn python-dotenv httpx')">Copy</button>
+    </div>
+    <div class="inst-body">
+      <span class="pfx">$ </span>pip install fastapi uvicorn python-dotenv httpx
+    </div>
+  </div>
+
+  <p>For the frontend, we're using zero libraries. Vanilla JavaScript has everything we need — the <code>fetch</code> API with <code>ReadableStream</code> is built into every modern browser and handles streaming beautifully.</p>
+
+  <div class="two-col">
+    <div class="col-card">
+      <div class="col-card-head"><span></span>Backend packages</div>
+      <ul>
+        <li><strong>fastapi</strong> — our API framework</li>
+        <li><strong>uvicorn</strong> — ASGI server to run it</li>
+        <li><strong>python-dotenv</strong> — manage API keys safely</li>
+        <li><strong>httpx</strong> — async HTTP client for model calls</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <div class="col-card-head"><span></span>Frontend (no install needed)</div>
+      <ul>
+        <li><strong>fetch API</strong> — native HTTP requests</li>
+        <li><strong>ReadableStream</strong> — parses SSE chunks</li>
+        <li><strong>TextDecoder</strong> — converts bytes to text</li>
+        <li><strong>DOM APIs</strong> — renders tokens in real time</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CORE -->
+  <div class="sl">The Core</div>
+  <h2>Building It — <span class="hl">Step by Step</span></h2>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <h3><span class="sn">STEP 01</span> Set Up the FastAPI App and CORS</h3>
+
+    <p>First, the skeleton. We need FastAPI running with CORS enabled, otherwise your browser will block requests from the frontend. This is the most common mistake beginners make, so let's get it right from the start.</p>
+
+    <div class="cd">
+      <div class="cd-top">
+        <div class="dots2"><span></span><span></span><span></span></div>
+        <span class="lang">Python — main.py</span>
+        <button class="cb2" onclick="cp(this,`from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom fastapi.responses import StreamingResponse\nfrom pydantic import BaseModel\nimport os\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\napp = FastAPI(title=\"KX Chat API\")\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\nclass ChatMessage(BaseModel):\n    message: str\n    history: list = []`)">Copy</button>
+      </div>
+      <div class="cd-body"><pre><span class="kw">from</span> <span class="cls">fastapi</span> <span class="kw">import</span> <span class="cls">FastAPI</span>
+<span class="kw">from</span> <span class="cls">fastapi.middleware.cors</span> <span class="kw">import</span> <span class="cls">CORSMiddleware</span>
+<span class="kw">from</span> <span class="cls">fastapi.responses</span> <span class="kw">import</span> <span class="cls">StreamingResponse</span>
+<span class="kw">from</span> <span class="cls">pydantic</span> <span class="kw">import</span> <span class="cls">BaseModel</span>
+<span class="kw">import</span> <span class="cls">os</span>
+<span class="kw">from</span> <span class="cls">dotenv</span> <span class="kw">import</span> <span class="fn">load_dotenv</span>
+
+<span class="fn">load_dotenv</span><span class="pn">()</span>  <span class="cm"># reads your .env file for API keys</span>
+
+<span class="cls">app</span> <span class="op">=</span> <span class="cls">FastAPI</span><span class="pn">(</span><span class="prop">title</span><span class="op">=</span><span class="str">"KX Chat API"</span><span class="pn">)</span>
+
+<span class="cm"># Allow all origins in dev — tighten this in production</span>
+<span class="cls">app</span><span class="pn">.</span><span class="fn">add_middleware</span><span class="pn">(</span>
+    <span class="cls">CORSMiddleware</span><span class="pn">,</span>
+    <span class="prop">allow_origins</span><span class="op">=</span><span class="pn">[</span><span class="str">"*"</span><span class="pn">]</span><span class="pn">,</span>
+    <span class="prop">allow_credentials</span><span class="op">=</span><span class="kw">True</span><span class="pn">,</span>
+    <span class="prop">allow_methods</span><span class="op">=</span><span class="pn">[</span><span class="str">"*"</span><span class="pn">]</span><span class="pn">,</span>
+    <span class="prop">allow_headers</span><span class="op">=</span><span class="pn">[</span><span class="str">"*"</span><span class="pn">]</span><span class="pn">,</span>
+<span class="pn">)</span>
+
+<span class="kw">class</span> <span class="cls">ChatMessage</span><span class="pn">(</span><span class="cls">BaseModel</span><span class="pn">)</span><span class="pn">:</span>
+    <span class="cls">message</span><span class="pn">:</span> <span class="cls">str</span>
+    <span class="cls">history</span><span class="pn">:</span> <span class="cls">list</span> <span class="op">=</span> <span class="pn">[]</span>  <span class="cm"># conversation history for multi-turn chat</span></pre></div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <h3><span class="sn">STEP 02</span> Write the Streaming Generator</h3>
+
+    <p>This is the heart of the whole system. We create an <em>async generator</em> function — a Python function that <code>yield</code>s values instead of returning them all at once. Every time it yields a chunk of text, FastAPI immediately flushes it to the browser. That's how the streaming works.</p>
+
+    <div class="cd">
+      <div class="cd-top">
+        <div class="dots2"><span></span><span></span><span></span></div>
+        <span class="lang">Python — main.py (continued)</span>
+        <button class="cb2" onclick="cp(this,`import httpx\nimport json\n\nasync def stream_ai_response(message: str, history: list):\n    api_key = os.getenv(\"AI_API_KEY\")\n\n    messages = [\n        {\"role\": \"system\", \"content\": \"You are a helpful AI assistant.\"},\n        *history,\n        {\"role\": \"user\", \"content\": message}\n    ]\n\n    async with httpx.AsyncClient() as client:\n        async with client.stream(\n            \"POST\",\n            \"https://api.your-ai-provider.com/v1/chat\",\n            headers={\n                \"Authorization\": f\"Bearer {api_key}\",\n                \"Content-Type\": \"application/json\"\n            },\n            json={\"messages\": messages, \"stream\": True},\n            timeout=60.0\n        ) as response:\n            async for line in response.aiter_lines():\n                if line.startswith(\"data: \"):\n                    data = line[6:]\n                    if data == \"[DONE]\":\n                        yield \"data: [DONE]\\n\\n\"\n                        return\n                    try:\n                        chunk = json.loads(data)\n                        token = chunk[\"choices\"][0][\"delta\"].get(\"content\", \"\")\n                        if token:\n                            yield f\"data: {json.dumps({'token': token})}\\n\\n\"\n                    except:\n                        pass`)">Copy</button>
+      </div>
+      <div class="cd-body"><pre><span class="kw">import</span> <span class="cls">httpx</span>
+<span class="kw">import</span> <span class="cls">json</span>
+
+<span class="kw">async def</span> <span class="fn">stream_ai_response</span><span class="pn">(</span><span class="cls">message</span><span class="pn">:</span> <span class="cls">str</span><span class="pn">,</span> <span class="cls">history</span><span class="pn">:</span> <span class="cls">list</span><span class="pn">)</span><span class="pn">:</span>
+    <span class="cls">api_key</span> <span class="op">=</span> <span class="cls">os</span><span class="pn">.</span><span class="fn">getenv</span><span class="pn">(</span><span class="str">"AI_API_KEY"</span><span class="pn">)</span>
+
+    <span class="cls">messages</span> <span class="op">=</span> <span class="pn">[</span>
+        <span class="pn">{</span><span class="str">"role"</span><span class="pn">:</span> <span class="str">"system"</span><span class="pn">,</span> <span class="str">"content"</span><span class="pn">:</span> <span class="str">"You are a helpful AI assistant."</span><span class="pn">}</span><span class="pn">,</span>
+        <span class="op">*</span><span class="cls">history</span><span class="pn">,</span>               <span class="cm"># spread in prior conversation turns</span>
+        <span class="pn">{</span><span class="str">"role"</span><span class="pn">:</span> <span class="str">"user"</span><span class="pn">,</span> <span class="str">"content"</span><span class="pn">:</span> <span class="cls">message</span><span class="pn">}</span>
+    <span class="pn">]</span>
+
+    <span class="kw">async with</span> <span class="cls">httpx</span><span class="pn">.</span><span class="cls">AsyncClient</span><span class="pn">()</span> <span class="kw">as</span> <span class="cls">client</span><span class="pn">:</span>
+        <span class="kw">async with</span> <span class="cls">client</span><span class="pn">.</span><span class="fn">stream</span><span class="pn">(</span>
+            <span class="str">"POST"</span><span class="pn">,</span>
+            <span class="str">"https://api.your-ai-provider.com/v1/chat"</span><span class="pn">,</span>
+            <span class="cls">headers</span><span class="op">=</span><span class="pn">{</span>
+                <span class="str">"Authorization"</span><span class="pn">:</span> <span class="fn">f</span><span class="str">"Bearer <span class="pn">{</span><span class="cls">api_key</span><span class="pn">}</span>"</span><span class="pn">,</span>
+                <span class="str">"Content-Type"</span><span class="pn">:</span> <span class="str">"application/json"</span>
+            <span class="pn">}</span><span class="pn">,</span>
+            <span class="cls">json</span><span class="op">=</span><span class="pn">{</span><span class="str">"messages"</span><span class="pn">:</span> <span class="cls">messages</span><span class="pn">,</span> <span class="str">"stream"</span><span class="pn">:</span> <span class="kw">True</span><span class="pn">}</span><span class="pn">,</span>
+            <span class="cls">timeout</span><span class="op">=</span><span class="num">60.0</span>
+        <span class="pn">)</span> <span class="kw">as</span> <span class="cls">response</span><span class="pn">:</span>
+            <span class="kw">async for</span> <span class="cls">line</span> <span class="kw">in</span> <span class="cls">response</span><span class="pn">.</span><span class="fn">aiter_lines</span><span class="pn">()</span><span class="pn">:</span>
+                <span class="kw">if</span> <span class="cls">line</span><span class="pn">.</span><span class="fn">startswith</span><span class="pn">(</span><span class="str">"data: "</span><span class="pn">)</span><span class="pn">:</span>
+                    <span class="cls">data</span> <span class="op">=</span> <span class="cls">line</span><span class="pn">[</span><span class="num">6</span><span class="pn">:]</span>
+                    <span class="kw">if</span> <span class="cls">data</span> <span class="op">==</span> <span class="str">"[DONE]"</span><span class="pn">:</span>
+                        <span class="kw">yield</span> <span class="str">"data: [DONE]\n\n"</span>
+                        <span class="kw">return</span>
+                    <span class="kw">try</span><span class="pn">:</span>
+                        <span class="cls">chunk</span> <span class="op">=</span> <span class="cls">json</span><span class="pn">.</span><span class="fn">loads</span><span class="pn">(</span><span class="cls">data</span><span class="pn">)</span>
+                        <span class="cm"># Extract just the text token from the response delta</span>
+                        <span class="cls">token</span> <span class="op">=</span> <span class="cls">chunk</span><span class="pn">[</span><span class="str">"choices"</span><span class="pn">]</span><span class="pn">[</span><span class="num">0</span><span class="pn">]</span><span class="pn">[</span><span class="str">"delta"</span><span class="pn">]</span><span class="pn">.</span><span class="fn">get</span><span class="pn">(</span><span class="str">"content"</span><span class="pn">,</span> <span class="str">""</span><span class="pn">)</span>
+                        <span class="kw">if</span> <span class="cls">token</span><span class="pn">:</span>
+                            <span class="kw">yield</span> <span class="fn">f</span><span class="str">"data: <span class="pn">{</span><span class="cls">json</span><span class="pn">.</span><span class="fn">dumps</span><span class="pn">(</span><span class="pn">{</span><span class="str">'token'</span><span class="pn">:</span> <span class="cls">token</span><span class="pn">}</span><span class="pn">)</span><span class="pn">}</span>\n\n"</span>
+                    <span class="kw">except</span><span class="pn">:</span>
+                        <span class="kw">pass</span></pre></div>
+    </div>
+
+    <ul class="el">
+      <li>The function is an <strong>async generator</strong> — it uses <code>yield</code> instead of <code>return</code>, so it can send multiple values over time.</li>
+      <li><strong>httpx.AsyncClient</strong> lets us make non-blocking HTTP requests from within our async FastAPI handler.</li>
+      <li>Every chunk we yield must follow the <strong>SSE format</strong>: <code>data: {...}\n\n</code>. Those two newlines at the end are required — they signal the end of one event to the browser.</li>
+      <li>We send <code>[DONE]</code> as a sentinel value so the browser knows to stop listening.</li>
+    </ul>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <h3><span class="sn">STEP 03</span> Create the Streaming Endpoint</h3>
+
+    <p>Now we connect the generator to an actual route. FastAPI's <code>StreamingResponse</code> handles all the SSE plumbing for us — we just need to tell it the right media type.</p>
+
+    <div class="cd">
+      <div class="cd-top">
+        <div class="dots2"><span></span><span></span><span></span></div>
+        <span class="lang">Python — main.py (route)</span>
+        <button class="cb2" onclick="cp(this,`@app.post(\"/chat/stream\")\nasync def chat_stream(body: ChatMessage):\n    return StreamingResponse(\n        stream_ai_response(body.message, body.history),\n        media_type=\"text/event-stream\",\n        headers={\n            \"Cache-Control\": \"no-cache\",\n            \"Connection\": \"keep-alive\",\n            \"X-Accel-Buffering\": \"no\",  # disables Nginx buffering\n        }\n    )\n\n# Run with: uvicorn main:app --reload --port 8000`)">Copy</button>
+      </div>
+      <div class="cd-body"><pre><span class="dec">@app.post</span><span class="pn">(</span><span class="str">"/chat/stream"</span><span class="pn">)</span>
+<span class="kw">async def</span> <span class="fn">chat_stream</span><span class="pn">(</span><span class="cls">body</span><span class="pn">:</span> <span class="cls">ChatMessage</span><span class="pn">)</span><span class="pn">:</span>
+    <span class="kw">return</span> <span class="cls">StreamingResponse</span><span class="pn">(</span>
+        <span class="fn">stream_ai_response</span><span class="pn">(</span><span class="cls">body</span><span class="pn">.</span><span class="cls">message</span><span class="pn">,</span> <span class="cls">body</span><span class="pn">.</span><span class="cls">history</span><span class="pn">)</span><span class="pn">,</span>
+        <span class="prop">media_type</span><span class="op">=</span><span class="str">"text/event-stream"</span><span class="pn">,</span>
+        <span class="prop">headers</span><span class="op">=</span><span class="pn">{</span>
+            <span class="str">"Cache-Control"</span><span class="pn">:</span> <span class="str">"no-cache"</span><span class="pn">,</span>
+            <span class="str">"Connection"</span><span class="pn">:</span> <span class="str">"keep-alive"</span><span class="pn">,</span>
+            <span class="str">"X-Accel-Buffering"</span><span class="pn">:</span> <span class="str">"no"</span><span class="pn">,</span>  <span class="cm"># disables Nginx buffering</span>
+        <span class="pn">}</span>
+    <span class="pn">)</span>
+
+<span class="cm"># Run with: uvicorn main:app --reload --port 8000</span></pre></div>
+    </div>
+
+    <div class="nt">
+      <span class="nt-i">🔧</span>
+      <p>The <code>X-Accel-Buffering: no</code> header is easy to miss but critical if you ever deploy behind Nginx. Without it, Nginx will buffer your entire SSE stream and send it all at once — completely defeating the purpose of streaming.</p>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <h3><span class="sn">STEP 04</span> Build the JavaScript Frontend</h3>
+
+    <p>This is where it all comes together visually. We use the <code>fetch</code> API with a <code>ReadableStream</code> reader to consume the SSE stream. The key insight is that <code>fetch</code> can read the response body progressively — you don't have to wait for it to finish.</p>
+
+    <div class="cd">
+      <div class="cd-top">
+        <div class="dots2"><span></span><span></span><span></span></div>
+        <span class="lang">JavaScript — chat.js</span>
+        <button class="cb2" onclick="cp(this,`const API_URL = 'http://localhost:8000/chat/stream';\nlet conversationHistory = [];\n\nasync function sendMessage(userMessage) {\n  // Add user message to conversation history\n  conversationHistory.push({ role: 'user', content: userMessage });\n\n  // Create a new message bubble for the AI response\n  const bubble = createAIBubble();\n\n  try {\n    const response = await fetch(API_URL, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({\n        message: userMessage,\n        history: conversationHistory.slice(0, -1)  // all except current\n      })\n    });\n\n    const reader = response.body.getReader();\n    const decoder = new TextDecoder();\n    let fullResponse = '';\n\n    while (true) {\n      const { done, value } = await reader.read();\n      if (done) break;\n\n      const chunk = decoder.decode(value, { stream: true });\n      const lines = chunk.split('\\n');\n\n      for (const line of lines) {\n        if (!line.startsWith('data: ')) continue;\n        const data = line.slice(6).trim();\n        if (data === '[DONE]') break;\n\n        try {\n          const parsed = JSON.parse(data);\n          const token = parsed.token || '';\n          fullResponse += token;\n          bubble.textContent += token;  // render token to DOM immediately\n          scrollToBottom();\n        } catch { /* skip malformed chunks */ }\n      }\n    }\n\n    // Save complete response to history for multi-turn context\n    conversationHistory.push({ role: 'assistant', content: fullResponse });\n\n  } catch (err) {\n    bubble.textContent = 'Connection error. Is the server running?';\n    bubble.classList.add('error');\n  }\n}`)">Copy</button>
+      </div>
+      <div class="cd-body"><pre><span class="kw">const</span> <span class="cls">API_URL</span> <span class="op">=</span> <span class="str">'http://localhost:8000/chat/stream'</span><span class="pn">;</span>
+<span class="kw">let</span> <span class="cls">conversationHistory</span> <span class="op">=</span> <span class="pn">[]</span><span class="pn">;</span>
+
+<span class="kw">async function</span> <span class="fn">sendMessage</span><span class="pn">(</span><span class="cls">userMessage</span><span class="pn">)</span> <span class="pn">{</span>
+  <span class="cm">// Add user message to conversation history</span>
+  <span class="cls">conversationHistory</span><span class="pn">.</span><span class="fn">push</span><span class="pn">(</span><span class="pn">{</span> <span class="prop">role</span><span class="pn">:</span> <span class="str">'user'</span><span class="pn">,</span> <span class="prop">content</span><span class="pn">:</span> <span class="cls">userMessage</span> <span class="pn">}</span><span class="pn">)</span><span class="pn">;</span>
+
+  <span class="cm">// Create a new message bubble for the AI response</span>
+  <span class="kw">const</span> <span class="cls">bubble</span> <span class="op">=</span> <span class="fn">createAIBubble</span><span class="pn">()</span><span class="pn">;</span>
+
+  <span class="kw">try</span> <span class="pn">{</span>
+    <span class="kw">const</span> <span class="cls">response</span> <span class="op">=</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="pn">(</span><span class="cls">API_URL</span><span class="pn">,</span> <span class="pn">{</span>
+      <span class="prop">method</span><span class="pn">:</span> <span class="str">'POST'</span><span class="pn">,</span>
+      <span class="prop">headers</span><span class="pn">:</span> <span class="pn">{</span> <span class="str">'Content-Type'</span><span class="pn">:</span> <span class="str">'application/json'</span> <span class="pn">}</span><span class="pn">,</span>
+      <span class="prop">body</span><span class="pn">:</span> <span class="cls">JSON</span><span class="pn">.</span><span class="fn">stringify</span><span class="pn">(</span><span class="pn">{</span>
+        <span class="prop">message</span><span class="pn">:</span> <span class="cls">userMessage</span><span class="pn">,</span>
+        <span class="prop">history</span><span class="pn">:</span> <span class="cls">conversationHistory</span><span class="pn">.</span><span class="fn">slice</span><span class="pn">(</span><span class="num">0</span><span class="pn">,</span> <span class="op">-</span><span class="num">1</span><span class="pn">)</span>  <span class="cm">// all except current</span>
+      <span class="pn">}</span><span class="pn">)</span>
+    <span class="pn">}</span><span class="pn">)</span><span class="pn">;</span>
+
+    <span class="kw">const</span> <span class="cls">reader</span> <span class="op">=</span> <span class="cls">response</span><span class="pn">.</span><span class="cls">body</span><span class="pn">.</span><span class="fn">getReader</span><span class="pn">()</span><span class="pn">;</span>
+    <span class="kw">const</span> <span class="cls">decoder</span> <span class="op">=</span> <span class="kw">new</span> <span class="cls">TextDecoder</span><span class="pn">()</span><span class="pn">;</span>
+    <span class="kw">let</span> <span class="cls">fullResponse</span> <span class="op">=</span> <span class="str">''</span><span class="pn">;</span>
+
+    <span class="kw">while</span> <span class="pn">(</span><span class="kw">true</span><span class="pn">)</span> <span class="pn">{</span>
+      <span class="kw">const</span> <span class="pn">{</span> <span class="cls">done</span><span class="pn">,</span> <span class="cls">value</span> <span class="pn">}</span> <span class="op">=</span> <span class="kw">await</span> <span class="cls">reader</span><span class="pn">.</span><span class="fn">read</span><span class="pn">()</span><span class="pn">;</span>
+      <span class="kw">if</span> <span class="pn">(</span><span class="cls">done</span><span class="pn">)</span> <span class="kw">break</span><span class="pn">;</span>
+
+      <span class="kw">const</span> <span class="cls">chunk</span> <span class="op">=</span> <span class="cls">decoder</span><span class="pn">.</span><span class="fn">decode</span><span class="pn">(</span><span class="cls">value</span><span class="pn">,</span> <span class="pn">{</span> <span class="prop">stream</span><span class="pn">:</span> <span class="kw">true</span> <span class="pn">}</span><span class="pn">)</span><span class="pn">;</span>
+      <span class="kw">const</span> <span class="cls">lines</span> <span class="op">=</span> <span class="cls">chunk</span><span class="pn">.</span><span class="fn">split</span><span class="pn">(</span><span class="str">'\n'</span><span class="pn">)</span><span class="pn">;</span>
+
+      <span class="kw">for</span> <span class="pn">(</span><span class="kw">const</span> <span class="cls">line</span> <span class="kw">of</span> <span class="cls">lines</span><span class="pn">)</span> <span class="pn">{</span>
+        <span class="kw">if</span> <span class="pn">(</span><span class="op">!</span><span class="cls">line</span><span class="pn">.</span><span class="fn">startsWith</span><span class="pn">(</span><span class="str">'data: '</span><span class="pn">)</span><span class="pn">)</span> <span class="kw">continue</span><span class="pn">;</span>
+        <span class="kw">const</span> <span class="cls">data</span> <span class="op">=</span> <span class="cls">line</span><span class="pn">.</span><span class="fn">slice</span><span class="pn">(</span><span class="num">6</span><span class="pn">)</span><span class="pn">.</span><span class="fn">trim</span><span class="pn">()</span><span class="pn">;</span>
+        <span class="kw">if</span> <span class="pn">(</span><span class="cls">data</span> <span class="op">===</span> <span class="str">'[DONE]'</span><span class="pn">)</span> <span class="kw">break</span><span class="pn">;</span>
+
+        <span class="kw">try</span> <span class="pn">{</span>
+          <span class="kw">const</span> <span class="cls">parsed</span> <span class="op">=</span> <span class="cls">JSON</span><span class="pn">.</span><span class="fn">parse</span><span class="pn">(</span><span class="cls">data</span><span class="pn">)</span><span class="pn">;</span>
+          <span class="kw">const</span> <span class="cls">token</span> <span class="op">=</span> <span class="cls">parsed</span><span class="pn">.</span><span class="cls">token</span> <span class="op">||</span> <span class="str">''</span><span class="pn">;</span>
+          <span class="cls">fullResponse</span> <span class="op">+=</span> <span class="cls">token</span><span class="pn">;</span>
+          <span class="cls">bubble</span><span class="pn">.</span><span class="cls">textContent</span> <span class="op">+=</span> <span class="cls">token</span><span class="pn">;</span>  <span class="cm">// render token to DOM immediately</span>
+          <span class="fn">scrollToBottom</span><span class="pn">()</span><span class="pn">;</span>
+        <span class="pn">}</span> <span class="kw">catch</span> <span class="pn">{</span> <span class="cm">/* skip malformed chunks */</span> <span class="pn">}</span>
+      <span class="pn">}</span>
+    <span class="pn">}</span>
+
+    <span class="cm">// Save complete response to history for multi-turn context</span>
+    <span class="cls">conversationHistory</span><span class="pn">.</span><span class="fn">push</span><span class="pn">(</span><span class="pn">{</span> <span class="prop">role</span><span class="pn">:</span> <span class="str">'assistant'</span><span class="pn">,</span> <span class="prop">content</span><span class="pn">:</span> <span class="cls">fullResponse</span> <span class="pn">}</span><span class="pn">)</span><span class="pn">;</span>
+
+  <span class="pn">}</span> <span class="kw">catch</span> <span class="pn">(</span><span class="cls">err</span><span class="pn">)</span> <span class="pn">{</span>
+    <span class="cls">bubble</span><span class="pn">.</span><span class="cls">textContent</span> <span class="op">=</span> <span class="str">'Connection error. Is the server running?'</span><span class="pn">;</span>
+    <span class="cls">bubble</span><span class="pn">.</span><span class="cls">classList</span><span class="pn">.</span><span class="fn">add</span><span class="pn">(</span><span class="str">'error'</span><span class="pn">)</span><span class="pn">;</span>
+  <span class="pn">}</span>
+<span class="pn">}</span></pre></div>
+    </div>
+
+    <ul class="el">
+      <li><strong>reader.read()</strong> — this is a loop that keeps pulling bytes from the open HTTP connection until it closes. Each call gives you the next available chunk.</li>
+      <li><strong>TextDecoder with stream: true</strong> — this flag is important. It tells the decoder that more data might be coming, so it won't break on partially received multi-byte characters.</li>
+      <li><strong>bubble.textContent += token</strong> — appending directly to the DOM is what makes the text appear to "type itself" word by word.</li>
+      <li>We maintain <strong>conversationHistory</strong> so the model has context for follow-up questions — otherwise every message would be treated as a new conversation.</li>
+    </ul>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <h3><span class="sn">STEP 05</span> Wire Up the UI</h3>
+
+    <p>The last piece is the actual HTML interface and the helper functions. Keep it minimal — the streaming effect itself is the impressive part.</p>
+
+    <div class="cd">
+      <div class="cd-top">
+        <div class="dots2"><span></span><span></span><span></span></div>
+        <span class="lang">JavaScript — UI helpers</span>
+        <button class="cb2" onclick="cp(this,`function createAIBubble() {\n  const bubble = document.createElement('div');\n  bubble.className = 'message ai-message';\n  bubble.textContent = '';\n  document.getElementById('messages').appendChild(bubble);\n  return bubble;\n}\n\nfunction scrollToBottom() {\n  const container = document.getElementById('messages');\n  container.scrollTop = container.scrollHeight;\n}\n\ndocument.getElementById('send-btn').addEventListener('click', () => {\n  const input = document.getElementById('user-input');\n  const message = input.value.trim();\n  if (!message) return;\n\n  // Render the user's message\n  const userBubble = document.createElement('div');\n  userBubble.className = 'message user-message';\n  userBubble.textContent = message;\n  document.getElementById('messages').appendChild(userBubble);\n\n  input.value = '';\n  sendMessage(message);\n});\n\n// Allow Enter key to send\ndocument.getElementById('user-input').addEventListener('keydown', (e) => {\n  if (e.key === 'Enter' && !e.shiftKey) {\n    e.preventDefault();\n    document.getElementById('send-btn').click();\n  }\n});`)">Copy</button>
+      </div>
+      <div class="cd-body"><pre><span class="kw">function</span> <span class="fn">createAIBubble</span><span class="pn">()</span> <span class="pn">{</span>
+  <span class="kw">const</span> <span class="cls">bubble</span> <span class="op">=</span> <span class="cls">document</span><span class="pn">.</span><span class="fn">createElement</span><span class="pn">(</span><span class="str">'div'</span><span class="pn">)</span><span class="pn">;</span>
+  <span class="cls">bubble</span><span class="pn">.</span><span class="cls">className</span> <span class="op">=</span> <span class="str">'message ai-message'</span><span class="pn">;</span>
+  <span class="cls">bubble</span><span class="pn">.</span><span class="cls">textContent</span> <span class="op">=</span> <span class="str">''</span><span class="pn">;</span>
+  <span class="cls">document</span><span class="pn">.</span><span class="fn">getElementById</span><span class="pn">(</span><span class="str">'messages'</span><span class="pn">)</span><span class="pn">.</span><span class="fn">appendChild</span><span class="pn">(</span><span class="cls">bubble</span><span class="pn">)</span><span class="pn">;</span>
+  <span class="kw">return</span> <span class="cls">bubble</span><span class="pn">;</span>
+<span class="pn">}</span>
+
+<span class="kw">function</span> <span class="fn">scrollToBottom</span><span class="pn">()</span> <span class="pn">{</span>
+  <span class="kw">const</span> <span class="cls">container</span> <span class="op">=</span> <span class="cls">document</span><span class="pn">.</span><span class="fn">getElementById</span><span class="pn">(</span><span class="str">'messages'</span><span class="pn">)</span><span class="pn">;</span>
+  <span class="cls">container</span><span class="pn">.</span><span class="cls">scrollTop</span> <span class="op">=</span> <span class="cls">container</span><span class="pn">.</span><span class="cls">scrollHeight</span><span class="pn">;</span>
+<span class="pn">}</span>
+
+<span class="cm">// Hook up the send button</span>
+<span class="cls">document</span><span class="pn">.</span><span class="fn">getElementById</span><span class="pn">(</span><span class="str">'send-btn'</span><span class="pn">)</span><span class="pn">.</span><span class="fn">addEventListener</span><span class="pn">(</span><span class="str">'click'</span><span class="pn">,</span> <span class="pn">()</span> <span class="op">=></span> <span class="pn">{</span>
+  <span class="kw">const</span> <span class="cls">input</span> <span class="op">=</span> <span class="cls">document</span><span class="pn">.</span><span class="fn">getElementById</span><span class="pn">(</span><span class="str">'user-input'</span><span class="pn">)</span><span class="pn">;</span>
+  <span class="kw">const</span> <span class="cls">message</span> <span class="op">=</span> <span class="cls">input</span><span class="pn">.</span><span class="cls">value</span><span class="pn">.</span><span class="fn">trim</span><span class="pn">()</span><span class="pn">;</span>
+  <span class="kw">if</span> <span class="pn">(</span><span class="op">!</span><span class="cls">message</span><span class="pn">)</span> <span class="kw">return</span><span class="pn">;</span>
+
+  <span class="kw">const</span> <span class="cls">userBubble</span> <span class="op">=</span> <span class="cls">document</span><span class="pn">.</span><span class="fn">createElement</span><span class="pn">(</span><span class="str">'div'</span><span class="pn">)</span><span class="pn">;</span>
+  <span class="cls">userBubble</span><span class="pn">.</span><span class="cls">className</span> <span class="op">=</span> <span class="str">'message user-message'</span><span class="pn">;</span>
+  <span class="cls">userBubble</span><span class="pn">.</span><span class="cls">textContent</span> <span class="op">=</span> <span class="cls">message</span><span class="pn">;</span>
+  <span class="cls">document</span><span class="pn">.</span><span class="fn">getElementById</span><span class="pn">(</span><span class="str">'messages'</span><span class="pn">)</span><span class="pn">.</span><span class="fn">appendChild</span><span class="pn">(</span><span class="cls">userBubble</span><span class="pn">)</span><span class="pn">;</span>
+
+  <span class="cls">input</span><span class="pn">.</span><span class="cls">value</span> <span class="op">=</span> <span class="str">''</span><span class="pn">;</span>
+  <span class="fn">sendMessage</span><span class="pn">(</span><span class="cls">message</span><span class="pn">)</span><span class="pn">;</span>
+<span class="pn">}</span><span class="pn">)</span><span class="pn">;</span>
+
+<span class="cm">// Allow Enter key to send</span>
+<span class="cls">document</span><span class="pn">.</span><span class="fn">getElementById</span><span class="pn">(</span><span class="str">'user-input'</span><span class="pn">)</span><span class="pn">.</span><span class="fn">addEventListener</span><span class="pn">(</span><span class="str">'keydown'</span><span class="pn">,</span> <span class="pn">(</span><span class="cls">e</span><span class="pn">)</span> <span class="op">=></span> <span class="pn">{</span>
+  <span class="kw">if</span> <span class="pn">(</span><span class="cls">e</span><span class="pn">.</span><span class="cls">key</span> <span class="op">===</span> <span class="str">'Enter'</span> <span class="op">&&</span> <span class="op">!</span><span class="cls">e</span><span class="pn">.</span><span class="cls">shiftKey</span><span class="pn">)</span> <span class="pn">{</span>
+    <span class="cls">e</span><span class="pn">.</span><span class="fn">preventDefault</span><span class="pn">()</span><span class="pn">;</span>
+    <span class="cls">document</span><span class="pn">.</span><span class="fn">getElementById</span><span class="pn">(</span><span class="str">'send-btn'</span><span class="pn">)</span><span class="pn">.</span><span class="fn">click</span><span class="pn">()</span><span class="pn">;</span>
+  <span class="pn">}</span>
+<span class="pn">}</span><span class="pn">)</span><span class="pn">;</span></pre></div>
+    </div>
+
+    <p>Start the backend with <code>uvicorn main:app --reload --port 8000</code>, open your HTML file in a browser, and you should see responses streaming in word by word. That's the full stack working end to end.</p>
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="sl">Conclusion</div>
+  <h2>What Did <span class="hl">We Learn?</span></h2>
+
+  <p>If you followed along, you now have a working real-time AI chat interface that doesn't feel like a loading screen simulator. That's genuinely useful — streaming is the baseline expectation for AI chat in 2026, and knowing how to implement it from scratch means you're not locked into any particular SDK or service.</p>
+
+  <p>What we built together, step by step:</p>
+
+  <div class="cg">
+    <div class="cg-i">FastAPI with CORS configured</div>
+    <div class="cg-i">Async SSE generator function</div>
+    <div class="cg-i">StreamingResponse endpoint</div>
+    <div class="cg-i">Streaming fetch in JavaScript</div>
+    <div class="cg-i">ReadableStream token parsing</div>
+    <div class="cg-i">Multi-turn conversation history</div>
+    <div class="cg-i">Real-time DOM token rendering</div>
+    <div class="cg-i">Keyboard + button event handling</div>
+  </div>
+
+  <p>From here, the obvious next steps are adding markdown rendering so code blocks and bold text actually look right, hooking this up to a local model instead of an external API, and adding persistent chat history to a database. But with this foundation, none of those are difficult — you've already done the hardest part.</p>
+
+  <div class="author">
+    <div class="av">KA</div>
+    <div class="ai">
+      <div class="an">Alkhassim Lawal (KingzAlkhassim)</div>
+      <div class="ar">Full-Stack Developer · KingxTech</div>
+      <p class="ab">Building the KingxTech ecosystem — including <strong style="color:var(--text);">K-xpertAI</strong>, a real-time AI coding assistant with a streaming chat interface exactly like the one built in this article. Based in Kaduna, Nigeria.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="fi">
+    <span class="ft">© 2026 <a href="https://kingzalkhasim.netlify.app">KingzAlkhassim</a> · KingxTech</span>
+    <a href="https://kingzalkhasim.netlify.app" class="bk">← Portfolio</a>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement;
+    document.getElementById('pg').style.width =
+      (d.scrollTop / (d.scrollHeight - d.clientHeight) * 100) + '%';
+  });
+  function cp(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const o = btn.textContent;
+      btn.textContent = '✓ Copied'; btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = o; btn.classList.remove('ok'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
