@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Fine-Tune a Llama Model on Hugging Face — KingzAlkhassim</title>
+  <meta name="description" content="A practical, step-by-step guide to fine-tuning a Meta Llama model using Python and Hugging Face tools." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ──────────────────────────────────────────────── */
+    :root {
+      --bg:          #0a0a0f;
+      --bg2:         #10101a;
+      --bg3:         #151522;
+      --border:      rgba(255,255,255,.07);
+      --border-hi:   rgba(255,255,255,.14);
+      --text:        #e8e8f0;
+      --text-muted:  #7a7a9a;
+      --text-dim:    #4a4a6a;
+
+      --pink:        #ff3eb5;
+      --violet:      #a855f7;
+      --blue:        #3b82f6;
+      --cyan:        #06b6d4;
+      --green:       #22c55e;
+      --yellow:      #facc15;
+
+      --grad:        linear-gradient(135deg, var(--pink), var(--violet), var(--blue));
+      --grad-soft:   linear-gradient(135deg, rgba(255,62,181,.15), rgba(168,85,247,.15), rgba(59,130,246,.15));
+
+      --radius:      12px;
+      --radius-lg:   20px;
+
+      --font-body:   'Cabinet Grotesk', sans-serif;
+      --font-mono:   'JetBrains Mono', monospace;
+      --font-display:'Syne', sans-serif;
+    }
+
+    /* ─── RESET ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── ANIMATED BACKGROUND GRID ───────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(168,85,247,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,85,247,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      top: -30%;
+      right: -20%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(168,85,247,.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: floatBlob 14s ease-in-out infinite alternate;
+    }
+    @keyframes floatBlob {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(-60px, 80px) scale(1.1); }
+    }
+
+    /* ─── NAVBAR ──────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,15,.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(1rem, 5vw, 4rem);
+    }
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 1rem;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: -.02em;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      white-space: nowrap;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: .4rem .75rem;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--bg3); }
+    .nav-cta {
+      font-size: .8rem;
+      font-weight: 600;
+      padding: .45rem 1rem;
+      border-radius: 8px;
+      background: var(--grad);
+      color: #fff !important;
+      -webkit-text-fill-color: #fff !important;
+      letter-spacing: .02em;
+      transition: opacity .2s, transform .2s;
+    }
+    .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ─── MAIN CONTENT WRAPPER ────────────────────────────────── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: clamp(2.5rem, 8vw, 5rem) clamp(1.25rem, 5vw, 2rem) 6rem;
+    }
+
+    /* ─── BREADCRUMB ──────────────────────────────────────────── */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .78rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      margin-bottom: 2.5rem;
+      animation: fadeUp .5s ease both;
+    }
+    .breadcrumb span { color: var(--text-dim); }
+    .breadcrumb a { color: var(--violet); transition: color .2s; }
+    .breadcrumb a:hover { color: var(--pink); }
+
+    /* ─── ARTICLE HEADER ──────────────────────────────────────── */
+    .article-header {
+      margin-bottom: 3.5rem;
+      animation: fadeUp .6s ease both;
+    }
+    .article-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .72rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--violet);
+      background: rgba(168,85,247,.12);
+      border: 1px solid rgba(168,85,247,.25);
+      padding: .3rem .75rem;
+      border-radius: 100px;
+      margin-bottom: 1.25rem;
+    }
+    .article-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--violet);
+      box-shadow: 0 0 8px var(--violet);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(.75); }
+    }
+
+    h1.article-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 5vw, 2.9rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.03em;
+      margin-bottom: 1.25rem;
+    }
+    h1.article-title .gradient-text {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .75rem 1.5rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .meta-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text-dim);
+    }
+    .meta-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .65rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* ─── DIVIDER ─────────────────────────────────────────────── */
+    .article-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--violet), var(--pink), transparent);
+      margin: 2rem 0 3rem;
+      opacity: .35;
+    }
+
+    /* ─── INTRO CARD ──────────────────────────────────────────── */
+    .intro-card {
+      background: var(--grad-soft);
+      border: 1px solid rgba(168,85,247,.2);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 2rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp .7s ease both;
+    }
+    .intro-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--grad);
+      border-radius: 4px 0 0 4px;
+    }
+    .intro-card p {
+      color: var(--text);
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+
+    /* ─── SECTION HEADINGS ────────────────────────────────────── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 1.5rem;
+      margin-top: 3.5rem;
+    }
+    .section-label::before {
+      content: '';
+      height: 1px;
+      width: 2rem;
+      background: var(--text-dim);
+    }
+    .section-label::after {
+      content: '';
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(90deg, var(--text-dim), transparent);
+    }
+
+    h2.section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    h2.section-title .accent { color: var(--pink); }
+
+    h3.step-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: var(--text);
+      margin: 2.5rem 0 .75rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    h3.step-title .step-badge {
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      background: var(--grad);
+      color: #fff;
+      padding: .25rem .6rem;
+      border-radius: 100px;
+    }
+
+    /* ─── BODY COPY ───────────────────────────────────────────── */
+    p {
+      color: var(--text-muted);
+      margin-bottom: 1.1rem;
+      font-size: .975rem;
+      line-height: 1.8;
+    }
+    p strong { color: var(--text); font-weight: 600; }
+    p em { color: var(--cyan); font-style: normal; }
+
+    /* ─── INSTALL BLOCK ───────────────────────────────────────── */
+    .install-block {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 1.5rem 0 2rem;
+    }
+    .install-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .6rem 1rem;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--border);
+    }
+    .install-header span {
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: var(--text-dim);
+      letter-spacing: .05em;
+    }
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border-hi);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      padding: .25rem .65rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .copy-btn:hover { border-color: var(--violet); color: var(--violet); }
+    .copy-btn.copied { border-color: var(--green); color: var(--green); }
+    .install-body {
+      padding: 1.1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: .875rem;
+      color: var(--cyan);
+      overflow-x: auto;
+    }
+    .install-body .prefix { color: var(--text-dim); user-select: none; }
+
+    /* ─── CODE BLOCK ──────────────────────────────────────────── */
+    .code-block {
+      background: #0d0d1a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 1.5rem 0 2rem;
+      position: relative;
+    }
+    .code-block:hover { border-color: var(--border-hi); }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .55rem 1rem;
+      background: rgba(255,255,255,.025);
+      border-bottom: 1px solid var(--border);
+    }
+    .code-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .code-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .code-dots span:nth-child(1) { background: #ff5f57; }
+    .code-dots span:nth-child(2) { background: #ffbd2e; }
+    .code-dots span:nth-child(3) { background: #28c840; }
+    .code-lang {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      color: var(--text-dim);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .code-body {
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+    }
+    .code-body pre {
+      font-family: var(--font-mono);
+      font-size: .85rem;
+      line-height: 1.75;
+      color: var(--text);
+      white-space: pre;
+      tab-size: 4;
+    }
+
+    /* Syntax colours */
+    .kw  { color: #c792ea; }  /* keyword */
+    .fn  { color: #82aaff; }  /* function */
+    .str { color: #c3e88d; }  /* string */
+    .cm  { color: #546e7a; }  /* comment */
+    .num { color: #f78c6c; }  /* number */
+    .cls { color: #ffcb6b; }  /* class */
+    .op  { color: #89ddff; }  /* operator */
+    .var { color: #eeffff; }  /* variable */
+    .punc{ color: #89ddff; }  /* punctuation */
+
+    /* ─── LIB LIST ────────────────────────────────────────────── */
+    .lib-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: .75rem;
+      margin: 1.5rem 0 2rem;
+    }
+    .lib-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .9rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .3rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .lib-card:hover { border-color: rgba(168,85,247,.35); transform: translateY(-2px); }
+    .lib-name {
+      font-family: var(--font-mono);
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--cyan);
+    }
+    .lib-desc {
+      font-size: .8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ─── EXPLAIN LIST ────────────────────────────────────────── */
+    .explain-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .explain-list li {
+      display: flex;
+      gap: .75rem;
+      font-size: .9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .explain-list li::before {
+      content: '→';
+      color: var(--violet);
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      flex-shrink: 0;
+      margin-top: .15rem;
+    }
+    .explain-list li strong { color: var(--text); }
+
+    /* ─── NOTE CALLOUT ────────────────────────────────────────── */
+    .note {
+      display: flex;
+      gap: .9rem;
+      background: rgba(250,204,21,.07);
+      border: 1px solid rgba(250,204,21,.18);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .note-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .1rem; }
+    .note p { margin: 0; font-size: .875rem; color: rgba(250,204,21,.85); }
+
+    /* ─── STEP CONTAINER ──────────────────────────────────────── */
+    .step {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: .5rem;
+      animation: fadeUp .5s ease both;
+    }
+    .step::before {
+      content: '';
+      position: absolute;
+      left: 0; top: .35rem;
+      width: 2px;
+      height: calc(100% - .35rem);
+      background: linear-gradient(180deg, var(--violet), transparent);
+      border-radius: 2px;
+    }
+
+    /* ─── CONCLUSION GRID ─────────────────────────────────────── */
+    .conclusion-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 520px) {
+      .conclusion-grid { grid-template-columns: 1fr; }
+    }
+    .conclusion-item {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      font-size: .85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      transition: border-color .2s;
+    }
+    .conclusion-item:hover { border-color: rgba(168,85,247,.35); }
+    .conclusion-item .ci-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--grad);
+      flex-shrink: 0;
+    }
+
+    /* ─── ADVANCED TOPICS ─────────────────────────────────────── */
+    .topic-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin: 1.25rem 0;
+    }
+    .topic-tag {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      padding: .35rem .85rem;
+      border-radius: 100px;
+      border: 1px solid var(--border-hi);
+      color: var(--text-muted);
+      transition: all .2s;
+      cursor: default;
+    }
+    .topic-tag:hover {
+      border-color: var(--violet);
+      color: var(--violet);
+      background: rgba(168,85,247,.08);
+    }
+
+    /* ─── AUTHOR CARD ─────────────────────────────────────────── */
+    .author-card {
+      margin-top: 5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .author-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--grad-soft);
+      pointer-events: none;
+    }
+    .author-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: #fff;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .author-info { position: relative; z-index: 1; }
+    .author-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: .2rem;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .author-title {
+      font-size: .8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-bottom: .75rem;
+    }
+    .author-bio {
+      font-size: .875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem clamp(1.25rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy {
+      font-size: .78rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+    .footer-copy a { color: var(--violet); transition: color .2s; }
+    .footer-copy a:hover { color: var(--pink); }
+    .back-btn {
+      font-size: .78rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .5rem .9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all .2s;
+    }
+    .back-btn:hover { border-color: var(--violet); color: var(--violet); }
+
+    /* ─── ANIMATIONS ──────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    main > * { animation: fadeUp .55s ease both; }
+    main > *:nth-child(2) { animation-delay: .08s; }
+    main > *:nth-child(3) { animation-delay: .14s; }
+    main > *:nth-child(4) { animation-delay: .20s; }
+
+    /* ─── PROGRESS BAR ────────────────────────────────────────── */
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--grad);
+      z-index: 200;
+      transition: width .1s linear;
+      width: 0%;
+    }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .author-card { flex-direction: column; }
+    }
+
+    /* ─── INLINE CODE ─────────────────────────────────────────── */
+    code {
+      font-family: var(--font-mono);
+      font-size: .85em;
+      background: rgba(168,85,247,.1);
+      color: var(--cyan);
+      padding: .15em .4em;
+      border-radius: 5px;
+      border: 1px solid rgba(168,85,247,.15);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Reading progress bar -->
+<div id="progress"></div>
+
+<!-- ── NAVBAR ──────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="https://kingzalkhasim.netlify.app" class="nav-logo">KingzAlkhassim</a>
+    <ul class="nav-links">
+      <li><a href="https://kingzalkhasim.netlify.app/#home">Home</a></li>
+      <li><a href="https://kingzalkhasim.netlify.app/#services">Services</a></li>
+      <li><a href="https://kingzalkhasim.netlify.app/#projects">Projects</a></li>
+      <li><a href="https://kingzalkhasim.netlify.app/#about">About</a></li>
+    </ul>
+    <a href="https://kingzalkhasim.netlify.app/#contact" class="nav-links"><a href="https://kingzalkhasim.netlify.app/#contact" class="nav-cta">Get Free Audit</a></a>
+  </div>
+</nav>
+
+<!-- ── MAIN ────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="https://kingzalkhasim.netlify.app">home</a>
+    <span>/</span>
+    <span>articles</span>
+    <span>/</span>
+    <span>llama-fine-tuning</span>
+  </div>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="article-tag">AI / Machine Learning</div>
+    <h1 class="article-title">
+      How to Fine-Tune a<br />
+      <span class="gradient-text">Llama Model</span> on Hugging Face<br />
+      Using Python
+    </h1>
+    <div class="article-meta">
+      <div class="meta-item">
+        <div class="meta-avatar">KA</div>
+        <span>KingzAlkhassim</span>
+      </div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">
+        <span>May 2026</span>
+      </div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">
+        <span>⏱ 8 min read</span>
+      </div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">
+        <span>Python · Hugging Face · LLM</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="article-divider"></div>
+
+  <!-- Introduction -->
+  <div class="intro-card">
+    <p>
+      Large Language Models like <strong>Llama by Meta AI</strong> have changed the way developers build AI applications. Instead of creating models from scratch, developers can now fine-tune existing models for specific tasks — chatbots, coding assistants, summarization tools, or customer support systems.
+      <br /><br />
+      Fine-tuning matters because a pre-trained model already understands language patterns, but may not understand your specific use case. By training it on your own dataset, you make it respond in a more accurate and specialized way. Thanks to <strong>Hugging Face</strong> and libraries like <strong>Transformers</strong>, this process is now within reach of any developer.
+    </p>
+  </div>
+
+  <!-- ── SECTION 1: Setup ──────────────────────────────────────── -->
+  <div class="section-label">Step Zero</div>
+  <h2 class="section-title">The Setup: Installing the <span class="accent">Required Libraries</span></h2>
+
+  <p>Before we start training, we need to install the required Python libraries. Open your terminal and run:</p>
+
+  <div class="install-block">
+    <div class="install-header">
+      <span>TERMINAL</span>
+      <button class="copy-btn" onclick="copyCode(this, 'pip install transformers datasets accelerate peft trl torch')">Copy</button>
+    </div>
+    <div class="install-body">
+      <span class="prefix">$ </span>pip install transformers datasets accelerate peft trl torch
+    </div>
+  </div>
+
+  <p>Here is what each library does:</p>
+
+  <div class="lib-grid">
+    <div class="lib-card">
+      <span class="lib-name">transformers</span>
+      <span class="lib-desc">Load and work with Llama and other Hugging Face models.</span>
+    </div>
+    <div class="lib-card">
+      <span class="lib-name">datasets</span>
+      <span class="lib-desc">Load and manage training datasets from Hugging Face Hub.</span>
+    </div>
+    <div class="lib-card">
+      <span class="lib-name">accelerate</span>
+      <span class="lib-desc">Makes training faster and easier across GPUs and hardware.</span>
+    </div>
+    <div class="lib-card">
+      <span class="lib-name">peft</span>
+      <span class="lib-desc">Parameter-efficient fine-tuning techniques like LoRA.</span>
+    </div>
+    <div class="lib-card">
+      <span class="lib-name">trl</span>
+      <span class="lib-desc">Training utilities and trainers for language models.</span>
+    </div>
+    <div class="lib-card">
+      <span class="lib-name">torch</span>
+      <span class="lib-desc">The core deep learning framework used by Hugging Face.</span>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: Core ───────────────────────────────────────── -->
+  <div class="section-label">The Core</div>
+  <h2 class="section-title">Fine-Tuning <span class="accent">Step by Step</span></h2>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <h3 class="step-title">
+      <span class="step-badge">STEP 01</span>
+      Import the Required Modules
+    </h3>
+    <p>The first thing we do is import the libraries we need.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python</span>
+        <button class="copy-btn" onclick="copyCode(this, `from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments\nfrom datasets import load_dataset\nfrom trl import SFTTrainer`)">Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="kw">from</span> <span class="var">transformers</span> <span class="kw">import</span> <span class="cls">AutoTokenizer</span><span class="punc">,</span> <span class="cls">AutoModelForCausalLM</span><span class="punc">,</span> <span class="cls">TrainingArguments</span>
+<span class="kw">from</span> <span class="var">datasets</span> <span class="kw">import</span> <span class="fn">load_dataset</span>
+<span class="kw">from</span> <span class="var">trl</span> <span class="kw">import</span> <span class="cls">SFTTrainer</span></pre></div>
+    </div>
+
+    <ul class="explain-list">
+      <li><strong>AutoTokenizer</strong> — converts text into tokens the model understands.</li>
+      <li><strong>AutoModelForCausalLM</strong> — loads the Llama language model weights.</li>
+      <li><strong>TrainingArguments</strong> — stores and manages all training settings.</li>
+      <li><strong>load_dataset</strong> — pulls datasets directly from the Hugging Face Hub.</li>
+      <li><strong>SFTTrainer</strong> — handles supervised fine-tuning end-to-end.</li>
+    </ul>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <h3 class="step-title">
+      <span class="step-badge">STEP 02</span>
+      Load the Llama Model
+    </h3>
+    <p>Now we load the tokenizer and the model from Hugging Face.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python</span>
+        <button class="copy-btn" onclick="copyCode(this, `model_name = \"meta-llama/Llama-3-8B\"\n\ntokenizer = AutoTokenizer.from_pretrained(model_name)\n\nmodel = AutoModelForCausalLM.from_pretrained(\n    model_name\n)`)">Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="var">model_name</span> <span class="op">=</span> <span class="str">"meta-llama/Llama-3-8B"</span>
+
+<span class="var">tokenizer</span> <span class="op">=</span> <span class="cls">AutoTokenizer</span><span class="punc">.</span><span class="fn">from_pretrained</span><span class="punc">(</span><span class="var">model_name</span><span class="punc">)</span>
+
+<span class="var">model</span> <span class="op">=</span> <span class="cls">AutoModelForCausalLM</span><span class="punc">.</span><span class="fn">from_pretrained</span><span class="punc">(</span>
+    <span class="var">model_name</span>
+<span class="punc">)</span></pre></div>
+    </div>
+
+    <ul class="explain-list">
+      <li><strong>model_name</strong> — stores the Hugging Face model identifier.</li>
+      <li><strong>from_pretrained()</strong> — downloads tokenizer weights and model weights.</li>
+      <li>The tokenizer prepares raw text for the model's input format.</li>
+    </ul>
+
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <p>Some Llama models require explicit access permission on Hugging Face before you can download them. Make sure you've accepted the model's license agreement on the Hub.</p>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <h3 class="step-title">
+      <span class="step-badge">STEP 03</span>
+      Load a Dataset
+    </h3>
+    <p>Next, we load a dataset to train on. Here we use the IMDB movie review dataset as a simple example.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python</span>
+        <button class="copy-btn" onclick='copyCode(this, "dataset = load_dataset(\"imdb\", split=\"train[:1000]\")")'>Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="var">dataset</span> <span class="op">=</span> <span class="fn">load_dataset</span><span class="punc">(</span><span class="str">"imdb"</span><span class="punc">,</span> <span class="var">split</span><span class="op">=</span><span class="str">"train[:1000]"</span><span class="punc">)</span></pre></div>
+    </div>
+
+    <ul class="explain-list">
+      <li><code>imdb</code> — a standard movie review text dataset available on Hugging Face Hub.</li>
+      <li><code>split="train[:1000]"</code> — loads only the first 1000 examples for a quick test run.</li>
+      <li>Smaller subsets are ideal for validating your pipeline before full training.</li>
+    </ul>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <h3 class="step-title">
+      <span class="step-badge">STEP 04</span>
+      Configure the Tokenizer
+    </h3>
+    <p>Some Llama model variants require a dedicated padding token. We set one here to avoid training errors.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python</span>
+        <button class="copy-btn" onclick='copyCode(this, "tokenizer.pad_token = tokenizer.eos_token")'>Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="var">tokenizer</span><span class="punc">.</span><span class="var">pad_token</span> <span class="op">=</span> <span class="var">tokenizer</span><span class="punc">.</span><span class="var">eos_token</span></pre></div>
+    </div>
+
+    <ul class="explain-list">
+      <li>Models process text in batches — short sentences need padding to match a uniform length.</li>
+      <li>We reuse the end-of-sequence token <code>eos_token</code> as the padding token.</li>
+      <li>Skipping this step will cause tokenizer errors during training.</li>
+    </ul>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <h3 class="step-title">
+      <span class="step-badge">STEP 05</span>
+      Set Training Arguments
+    </h3>
+    <p>Now we define the training configuration using <code>TrainingArguments</code>.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python</span>
+        <button class="copy-btn" onclick='copyCode(this, `training_args = TrainingArguments(\n    output_dir=\"./llama-finetuned\",\n    per_device_train_batch_size=2,\n    num_train_epochs=1,\n    logging_steps=10,\n    save_steps=50\n)`)'>Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="var">training_args</span> <span class="op">=</span> <span class="cls">TrainingArguments</span><span class="punc">(</span>
+    <span class="var">output_dir</span><span class="op">=</span><span class="str">"./llama-finetuned"</span><span class="punc">,</span>
+    <span class="var">per_device_train_batch_size</span><span class="op">=</span><span class="num">2</span><span class="punc">,</span>
+    <span class="var">num_train_epochs</span><span class="op">=</span><span class="num">1</span><span class="punc">,</span>
+    <span class="var">logging_steps</span><span class="op">=</span><span class="num">10</span><span class="punc">,</span>
+    <span class="var">save_steps</span><span class="op">=</span><span class="num">50</span>
+<span class="punc">)</span></pre></div>
+    </div>
+
+    <ul class="explain-list">
+      <li><strong>output_dir</strong> — folder where the trained model checkpoints will be saved.</li>
+      <li><strong>per_device_train_batch_size=2</strong> — number of samples processed simultaneously per GPU.</li>
+      <li><strong>num_train_epochs=1</strong> — the entire dataset is passed through the model once.</li>
+      <li><strong>logging_steps=10</strong> — training metrics logged every 10 optimization steps.</li>
+      <li><strong>save_steps=50</strong> — a checkpoint is saved every 50 steps for recovery.</li>
+    </ul>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <h3 class="step-title">
+      <span class="step-badge">STEP 06</span>
+      Create the Trainer
+    </h3>
+    <p>Now we wire everything together with <code>SFTTrainer</code>.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python</span>
+        <button class="copy-btn" onclick='copyCode(this, `trainer = SFTTrainer(\n    model=model,\n    train_dataset=dataset,\n    args=training_args\n)`)'>Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="var">trainer</span> <span class="op">=</span> <span class="cls">SFTTrainer</span><span class="punc">(</span>
+    <span class="var">model</span><span class="op">=</span><span class="var">model</span><span class="punc">,</span>
+    <span class="var">train_dataset</span><span class="op">=</span><span class="var">dataset</span><span class="punc">,</span>
+    <span class="var">args</span><span class="op">=</span><span class="var">training_args</span>
+<span class="punc">)</span></pre></div>
+    </div>
+
+    <p>The trainer automatically handles feeding data into the model, running backpropagation, updating model weights, and saving checkpoints — no manual training loop required.</p>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step">
+    <h3 class="step-title">
+      <span class="step-badge">STEP 07</span>
+      Start Fine-Tuning
+    </h3>
+    <p>One line kicks off the entire training run.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python</span>
+        <button class="copy-btn" onclick='copyCode(this, "trainer.train()")'>Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="var">trainer</span><span class="punc">.</span><span class="fn">train</span><span class="punc">()</span></pre></div>
+    </div>
+
+    <p>During training the model reads text from the dataset, predicts the next tokens, calculates its error, then updates its own weights to improve. Depending on your GPU and dataset size, this can take minutes or several hours.</p>
+  </div>
+
+  <!-- Step 8 -->
+  <div class="step">
+    <h3 class="step-title">
+      <span class="step-badge">STEP 08</span>
+      Save the Fine-Tuned Model
+    </h3>
+    <p>After training completes, save the model to disk.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python</span>
+        <button class="copy-btn" onclick='copyCode(this, "trainer.save_model(\"./final-llama-model\")")'>Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="var">trainer</span><span class="punc">.</span><span class="fn">save_model</span><span class="punc">(</span><span class="str">"./final-llama-model"</span><span class="punc">)</span></pre></div>
+    </div>
+
+    <ul class="explain-list">
+      <li>Reuse the model across sessions without retraining.</li>
+      <li>Deploy it directly into your applications or APIs.</li>
+      <li>Share it publicly on the Hugging Face Hub.</li>
+      <li>Resume and continue training from this checkpoint later.</li>
+    </ul>
+  </div>
+
+  <!-- ── CONCLUSION ─────────────────────────────────────────────── -->
+  <div class="section-label">Conclusion</div>
+  <h2 class="section-title">What Did <span class="accent">We Learn?</span></h2>
+
+  <p>In this article, we walked through the full fine-tuning pipeline for a Llama model using Python and Hugging Face. Here is a quick recap of every stage we covered:</p>
+
+  <div class="conclusion-grid">
+    <div class="conclusion-item"><div class="ci-dot"></div>Installing required libraries</div>
+    <div class="conclusion-item"><div class="ci-dot"></div>Loading a Llama model</div>
+    <div class="conclusion-item"><div class="ci-dot"></div>Preparing a training dataset</div>
+    <div class="conclusion-item"><div class="ci-dot"></div>Configuring the tokenizer</div>
+    <div class="conclusion-item"><div class="ci-dot"></div>Setting training arguments</div>
+    <div class="conclusion-item"><div class="ci-dot"></div>Running the fine-tuning loop</div>
+    <div class="conclusion-item"><div class="ci-dot"></div>Saving the trained model</div>
+    <div class="conclusion-item"><div class="ci-dot"></div>Deploying &amp; reusing the model</div>
+  </div>
+
+  <p>Fine-tuning is one of the most powerful skills in modern AI development — it lets you adapt massive pre-trained models for specialized tasks without starting from zero. As you continue learning, explore these advanced topics next:</p>
+
+  <div class="topic-tags">
+    <span class="topic-tag">LoRA Fine-Tuning</span>
+    <span class="topic-tag">QLoRA Optimization</span>
+    <span class="topic-tag">Custom Datasets</span>
+    <span class="topic-tag">GPU Optimization</span>
+    <span class="topic-tag">Model Quantization</span>
+    <span class="topic-tag">Deploying as API</span>
+    <span class="topic-tag">RLHF</span>
+    <span class="topic-tag">Inference Speed</span>
+  </div>
+
+  <p>With enough practice, you can build specialized AI systems for coding, education, customer support, gaming, and real-world applications.</p>
+
+  <!-- Author Card -->
+  <div class="author-card">
+    <div class="author-avatar">KA</div>
+    <div class="author-info">
+      <div class="author-name">Alkhassim Lawal</div>
+      <div class="author-title">Full-Stack Developer · KingxTech Company</div>
+      <p class="author-bio">
+        PHP, MySQL, and JavaScript specialist building high-performance web solutions and AI-powered tools.
+        Currently developing <strong style="color: var(--text);">KingxTech IDE</strong> and <strong style="color: var(--text);">K-XpertAI</strong> — an AI coding assistant for developers.
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">
+      © 2026 <a href="https://kingzalkhasim.netlify.app">KingzAlkhassim</a> · KingxTech Company
+    </span>
+    <a href="https://kingzalkhasim.netlify.app" class="back-btn">← Back to Portfolio</a>
+  </div>
+</footer>
+
+<script>
+  /* Reading progress bar */
+  window.addEventListener('scroll', () => {
+    const doc   = document.documentElement;
+    const top   = doc.scrollTop  || document.body.scrollTop;
+    const total = doc.scrollHeight - doc.clientHeight;
+    document.getElementById('progress').style.width = (top / total * 100) + '%';
+  });
+
+  /* Copy-to-clipboard */
+  function copyCode(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
