@@ -1,5 +1,4 @@
-
-        :root {
+:root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #121218;
             --bg-card: rgba(25, 25, 35, 0.6);
@@ -202,6 +201,8 @@
         }
 
         .hero-container {
+            position: relative;
+            z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
             width: 100%;
@@ -209,6 +210,24 @@
             grid-template-columns: 1.2fr 1fr;
             gap: 4rem;
             align-items: center;
+        }
+
+        /* ═══ HERO PARTICLE NETWORK (canvas, behind content) ═══ */
+        #hero-particles {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            display: block;
+            pointer-events: none;
+        }
+
+        /* soft vignette so the network never competes with the text */
+        .hero-vignette {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 70% 60% at 30% 45%, transparent 0%, var(--bg-primary) 92%);
         }
 
         .hero-content h1 {
@@ -2661,6 +2680,7 @@
 
         /* Stop hero floating orb */
         :root.ldm .hero::after            { animation: none !important; }
+        :root.ldm #hero-particles         { display: none !important; }
 
         /* Stop gamer avatar float */
         :root.ldm .gamer-avatar           { animation: none !important; }
