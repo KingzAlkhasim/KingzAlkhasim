@@ -62,8 +62,8 @@ document.addEventListener('DOMContentLoaded',initTypingAnimations);
 // LinkedIn Footer Link
 document.addEventListener('DOMContentLoaded',()=>{
     const socialLinks=document.querySelector('.social-links'); if(!socialLinks||socialLinks.querySelector('.sl-linkedin'))return;
-    const linkedin=document.createElement('a'); linkedin.href='https://www.linkedin.com/in/alkhassim-lawal-umar-85726942a?trk=contact-info'; linkedin.target='_blank'; linkedin.rel='noopener noreferrer'; linkedin.className='social-link sl-linkedin'; linkedin.title='LinkedIn'; linkedin.setAttribute('aria-label','LinkedIn');
-    linkedin.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V8.999h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.287zM5.337 7.433a2.062 2.062 0 1 1 0-4.123 2.062 2.062 0 0 1 0-4.123 2.062 2.062 0 0 1 0 4.123zM7.119 20.452H3.554V8.999h3.565v11.453zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 .774 0 1.729 0 22.271V1.729C0 .774 0 .774 0 .774 0 0 .774 0 1.771 0z"/></svg>`;
+    const linkedin=document.createElement('a'); linkedin.href='https://www.linkedin.com/in/alkhassim-lawal-umar-85726942a?trk=contact-info'; linkedin.target='_blank'; linkedin.rel='noopener noreferrer'; linkedin.className='social-link sl-linkedin'; linkedin.title='LinkedIn'; linkedin.setAttribute('aria-label','LinkedIn';
+    linkedin.innerHTML='<span aria-hidden="true" style="font-family:Arial,sans-serif;font-weight:800;font-size:16px;line-height:1">in</span>';
     socialLinks.appendChild(linkedin);
 });
 
