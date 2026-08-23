@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded',initTypingAnimations);
 // LinkedIn Footer Link
 document.addEventListener('DOMContentLoaded',()=>{
     const socialLinks=document.querySelector('.social-links'); if(!socialLinks||socialLinks.querySelector('.sl-linkedin'))return;
-    const linkedin=document.createElement('a'); linkedin.href='https://www.linkedin.com/in/alkhassim-lawal-umar-85726942a?trk=contact-info'; linkedin.target='_blank'; linkedin.rel='noopener noreferrer'; linkedin.className='social-link sl-linkedin'; linkedin.title='LinkedIn'; linkedin.setAttribute('aria-label','LinkedIn';
+    const linkedin=document.createElement('a'); linkedin.href='https://www.linkedin.com/in/alkhassim-lawal-umar-85726942a?trk=contact-info'; linkedin.target='_blank'; linkedin.rel='noopener noreferrer'; linkedin.className='social-link sl-linkedin'; linkedin.title='LinkedIn'; linkedin.setAttribute('aria-label','LinkedIn');
     linkedin.innerHTML='<span aria-hidden="true" style="font-family:Arial,sans-serif;font-weight:800;font-size:16px;line-height:1">in</span>';
     socialLinks.appendChild(linkedin);
 });
