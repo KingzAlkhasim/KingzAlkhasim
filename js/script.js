@@ -62,10 +62,23 @@ document.addEventListener('DOMContentLoaded',initTypingAnimations);
 // LinkedIn Footer Link
 document.addEventListener('DOMContentLoaded',()=>{
     const socialLinks=document.querySelector('.social-links'); if(!socialLinks||socialLinks.querySelector('.sl-linkedin'))return;
-    const linkedin=document.createElement('a'); linkedin.href='https://www.linkedin.com/in/alkhassim-lawal-umar-85726942'; linkedin.target='_blank'; linkedin.rel='noopener noreferrer'; linkedin.className='social-link sl-linkedin'; linkedin.title='LinkedIn'; linkedin.setAttribute('aria-label','LinkedIn');
-    linkedin.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V8.999h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.287zM5.337 7.433a2.062 2.062 0 1 1 0-4.123 2.062 2.062 0 0 1 0 4.123zM7.119 20.452H3.554V8.999h3.565v11.453zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.454C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>`;
+    const linkedin=document.createElement('a'); linkedin.href='https://www.linkedin.com/in/alkhassim-lawal-umar-85726942a?trk=contact-info'; linkedin.target='_blank'; linkedin.rel='noopener noreferrer'; linkedin.className='social-link sl-linkedin'; linkedin.title='LinkedIn'; linkedin.setAttribute('aria-label','LinkedIn');
+    linkedin.innerHTML='<span aria-hidden="true" style="font-family:Arial,sans-serif;font-weight:800;font-size:16px;line-height:1">in</span>';
     socialLinks.appendChild(linkedin);
 });
 
 // Portfolio conversion + performance enhancements
 const enhancementScript=document.createElement('script'); enhancementScript.src='js/portfolio-enhancements.js'; document.body.appendChild(enhancementScript);
+
+// Portfolio update notice
+document.addEventListener('DOMContentLoaded',()=>{
+    if(document.getElementById('site-update-notice'))return;
+    const notice=document.createElement('div');
+    notice.id='site-update-notice';
+    notice.setAttribute('role','status');
+    notice.innerHTML='<span aria-hidden="true">🚧</span><strong>Portfolio update in progress</strong><span>Some sections may change temporarily while I improve the site.</span>';
+    const style=document.createElement('style');
+    style.textContent='#site-update-notice{display:flex;align-items:center;justify-content:center;gap:.55rem;flex-wrap:wrap;padding:.65rem 1rem;background:rgba(15,15,22,.96);border-bottom:1px solid rgba(0,240,255,.16);color:var(--text-secondary);font-size:.82rem;line-height:1.4;text-align:center;position:relative;z-index:1000}#site-update-notice strong{color:var(--text-primary)}#site-update-notice span[aria-hidden="true"]{font-size:.95rem}@media(max-width:600px){#site-update-notice{font-size:.75rem;padding:.55rem .8rem;gap:.4rem}}';
+    document.head.appendChild(style);
+    document.body.insertBefore(notice,document.body.firstChild);
+});
