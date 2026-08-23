@@ -70,15 +70,19 @@ document.addEventListener('DOMContentLoaded',()=>{
 // Portfolio conversion + performance enhancements
 const enhancementScript=document.createElement('script'); enhancementScript.src='js/portfolio-enhancements.js'; document.body.appendChild(enhancementScript);
 
-// Portfolio update notice
+// Portfolio update notice — normal page-flow card, never part of the navbar.
 document.addEventListener('DOMContentLoaded',()=>{
     if(document.getElementById('site-update-notice'))return;
     const notice=document.createElement('div');
     notice.id='site-update-notice';
     notice.setAttribute('role','status');
-    notice.innerHTML='<span aria-hidden="true">🚧</span><strong>Portfolio update in progress</strong><span>Some sections may change temporarily while I improve the site.</span>';
+    notice.innerHTML='<span class="update-icon" aria-hidden="true">⚡</span><div><strong>Portfolio is being updated</strong><span>Some sections may change temporarily while I improve the site.</span></div>';
     const style=document.createElement('style');
-    style.textContent='#site-update-notice{display:flex;align-items:center;justify-content:center;gap:.55rem;flex-wrap:wrap;padding:.65rem 1rem;background:rgba(15,15,22,.96);border-bottom:1px solid rgba(0,240,255,.16);color:var(--text-secondary);font-size:.82rem;line-height:1.4;text-align:center;position:relative;z-index:1000}#site-update-notice strong{color:var(--text-primary)}#site-update-notice span[aria-hidden="true"]{font-size:.95rem}@media(max-width:600px){#site-update-notice{font-size:.75rem;padding:.55rem .8rem;gap:.4rem}}';
+    style.textContent='#site-update-notice{width:min(760px,calc(100% - 32px));box-sizing:border-box;margin:28px auto 16px;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(20,20,28,.88);border:1px solid rgba(255,72,72,.55);border-radius:28px;color:var(--text-secondary);font-size:.82rem;line-height:1.5;text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.16)}#site-update-notice strong{display:block;color:var(--text-primary);font-size:.88rem;margin-bottom:2px}#site-update-notice div span{display:block}.update-icon{width:30px;height:30px;display:grid;place-items:center;flex:0 0 30px;border:1px solid rgba(255,72,72,.45);border-radius:50%;font-size:.85rem;background:rgba(255,72,72,.08)}@media(max-width:600px){#site-update-notice{width:calc(100% - 24px);margin:20px auto 10px;padding:12px 15px;border-radius:24px;font-size:.76rem}.update-icon{width:26px;height:26px;flex-basis:26px}}';
     document.head.appendChild(style);
-    document.body.insertBefore(notice,document.body.firstChild);
+    const hero=document.querySelector('.hero');
+    const availability=document.getElementById('availability-strip');
+    if(availability) availability.insertAdjacentElement('afterend',notice);
+    else if(hero) hero.insertAdjacentElement('afterend',notice);
+    else document.body.appendChild(notice);
 });
